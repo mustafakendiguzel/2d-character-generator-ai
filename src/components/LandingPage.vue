@@ -20,9 +20,9 @@
             </div>
           </div>
           <div class="relative">
-            <div class="carousel w-[600px] h-full">
+            <div class="carousel w-[600px] h-[400px]">
               <div
-                v-for="n in 3"
+                v-for="n in 5"
                 :key="n"
                 :id="`slide${n}`"
                 class="carousel-item relative w-full h-full"
@@ -109,14 +109,14 @@
             <div class="relative pl-16">
               <dt class="font-semibold">
                 <div
-                  class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-primary-blue"
+                  class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-purple-500"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke-width="1.5"
-                    stroke="currentColor"
+                    stroke="black"
                     aria-hidden="true"
                     data-slot="icon"
                     class="h-6 w-6"
@@ -138,14 +138,14 @@
             <div class="relative pl-16">
               <dt class="font-semibold">
                 <div
-                  class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-primary-blue"
+                  class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-purple-500"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke-width="1.5"
-                    stroke="currentColor"
+                    stroke="black"
                     aria-hidden="true"
                     data-slot="icon"
                     class="h-6 w-6"
@@ -167,11 +167,11 @@
             <div class="relative pl-16">
               <dt class="font-semibold">
                 <div
-                  class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-primary-blue"
+                  class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-purple-500"
                 >
                   <svg
-                    stroke="currentColor"
-                    fill="currentColor"
+                    stroke="black"
+                    fill="black"
                     stroke-width="0"
                     viewBox="0 0 16 16"
                     class="h-6 w-6"
@@ -195,11 +195,11 @@
             <div class="relative pl-16">
               <dt class="font-semibold">
                 <div
-                  class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-primary-blue"
+                  class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-purple-500"
                 >
                   <svg
-                    stroke="currentColor"
-                    fill="currentColor"
+                    stroke="black"
+                    fill="black"
                     stroke-width="0"
                     viewBox="0 0 24 24"
                     class="h-6 w-6"
@@ -223,11 +223,11 @@
             <div class="relative pl-16">
               <dt class="font-semibold">
                 <div
-                  class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-primary-blue"
+                  class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-purple-500"
                 >
                   <svg
-                    stroke="currentColor"
-                    fill="currentColor"
+                    stroke="black"
+                    fill="black"
                     stroke-width="0"
                     viewBox="0 0 24 24"
                     class="h-6 w-6"
@@ -429,74 +429,75 @@
       </section>
 
       <section class="container mx-auto mb-24 max-w-screen-lg px-8">
-        <h2 class="mb-12 text-left text-4xl md:text-center">The Benefits of Generated Icons</h2>
+        <h2 class="mb-12 text-left text-4xl md:text-center">
+          The Benefits of 2D Character Generation
+        </h2>
         <p class="mx-auto mb-12 max-w-screen-sm">
-          Let's be honest, you don't have the time or money to find a designer, communicate back and
-          forth via email, and refine your icon over and over again. Letting AI generate your icon
-          provides many benefits.
+          Let’s be honest, you don’t have the time or resources to find a designer, communicate back
+          and forth, and refine your 2D characters repeatedly. Our AI-powered 2D character generator
+          offers multiple advantages that save you time and money while delivering high-quality
+          results.
         </p>
         <div class="mb-12 grid grid-cols-1 gap-12 md:grid-cols-2">
           <div class="flex flex-col gap-4">
             <img
               width="200"
               height="200"
-              src=""
+              src="@/assets/icons/savemoney.png"
               class="mx-auto rounded-lg bg-gray-200 p-4"
               alt="a piggy bank image of someone saving money"
             />
             <div class="w-full text-center text-2xl font-bold">Save Money</div>
             <p class="mb-8">
-              Hiring a designer to create custom icons can be expensive, especially if you need a
-              large number of icons or want to make frequent updates. Our AI icon generator tool
-              offers more affordable pricing.
+              Hiring a designer to create custom 2D characters can be costly, especially if you need
+              multiple designs or frequent updates. With our AI character generator, you can create
+              affordable, detailed characters without breaking your budget.
             </p>
           </div>
           <div class="flex flex-col gap-4">
             <img
               width="200"
               height="200"
-              src=""
+              src="@/assets/icons/speed.png"
               class="mx-auto rounded-lg bg-gray-200 p-4"
               alt="a piggy bank image of someone saving money"
             />
             <div class="w-full text-center text-2xl font-bold">Speed</div>
             <p class="mb-8">
-              Hiring a designer, on the other hand, can take days or even weeks, especially if the
-              designer is working on other projects at the same time. Our digital icon generator can
-              create custom icons quickly, often in just a few seconds.
+              Creating characters with a designer can take days or even weeks, especially if they’re
+              juggling multiple projects. Our AI tool, however, generates fully customizable 2D
+              characters in just seconds, allowing you to move forward with your project faster.
             </p>
           </div>
           <div class="flex flex-col gap-4">
             <img
               width="200"
               height="200"
-              src=""
+              src="@/assets/icons/wizard.png"
               class="mx-auto rounded-lg bg-gray-200 p-4"
               alt="a piggy bank image of someone saving money"
             />
             <div class="w-full text-center text-2xl font-bold">Consistency</div>
             <p class="mb-8">
-              Our icon generator tool can ensure a consistent look and feel across all of your
-              icons, which can be difficult to achieve if you're hiring multiple designers or
-              working with a single designer who has a different style for each icon. This can be
-              particularly important for branding purposes, where you want your icons to convey a
-              consistent message and image.
+              Our 2D character generator ensures a consistent style across all your characters,
+              which is crucial for game development or other projects where uniformity matters.
+              Avoid the inconsistency that may arise when working with different designers or
+              varying styles.
             </p>
           </div>
           <div class="flex flex-col gap-4">
             <img
               width="200"
               height="200"
-              src=""
+              src="@/assets/icons/customizable.png"
               class="mx-auto rounded-lg bg-gray-200 p-4"
               alt="a piggy bank image of someone saving money"
             />
             <div class="w-full text-center text-2xl font-bold">Customizable</div>
             <p class="mb-8">
-              Our AI icon generator tools offer a high degree of customizability, allowing you to
-              adjust the colors, shapes, and other aspects of the icons to fit your specific needs.
-              This can be more difficult to achieve with a designer, who may have limited time or
-              resources to make extensive customizations.
+              Our AI tools give you full control over the appearance of your characters. Customize
+              features like clothing, accessories, and gear to match your specific vision. This
+              flexibility allows you to adapt the characters to any project seamlessly.
             </p>
           </div>
         </div>
@@ -508,7 +509,9 @@
         </p>
       </section>
       <section class="mb-24 text-center">
-        <a class="btn-info btn" href="/generate">Start generating icons!</a>
+        <a class="btn-info btn" href="/generate"
+          >Start generating your custom 2D characters now and bring your project to life!
+        </a>
       </section>
     </div>
   </div>
@@ -520,7 +523,7 @@ import { ref, onMounted } from 'vue'
 export default {
   setup() {
     const currentSlide = ref(1)
-    const totalSlides = 3
+    const totalSlides = 5
 
     // Slayt gösterisini başlat
     const startSlideshow = () => {

@@ -57,7 +57,7 @@ const remainingCredits = computed(() => creditStore.remainingCredits)
   <div class="navbar bg-base-100 mt-2">
     <div class="flex-1 items-center ml-2 md:ml-20">
       <RouterLink to="/" class="flex items-center">
-        <img src="@/assets/logo3.png" alt="Logo" class="mr-2 h-8 w-10 lg:h-12 lg:w-12" />
+        <img src="@/assets/logo3.png" alt="Logo" class="mr-4 h-8 w-10 lg:h-12 lg:w-12" />
         <span class="text-base lg:text-lg font-semibold md:hidden xl:inline 2xl:inline"
           >2D Character Generator AI</span
         >

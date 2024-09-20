@@ -8,7 +8,7 @@
           >© 2024<!-- -->
           <a href="" class="hover:underline">Muti Software Solutions, IST</a></span
         ><a href="mailto:mustafakendiguzel@gmail.com" class="hover:text-primary-blue"
-          >icongeneratorai@gmail.com</a
+          >mustafakendiguzel@gmail.com</a
         >
       </div>
       <div class="flex justify-between gap-8 px-4">
