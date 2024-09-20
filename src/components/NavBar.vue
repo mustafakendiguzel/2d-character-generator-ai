@@ -57,7 +57,7 @@ const remainingCredits = computed(() => creditStore.remainingCredits)
   <div class="navbar bg-base-100 mt-2">
     <div class="flex-1 items-center ml-2 md:ml-20">
       <RouterLink to="/" class="flex items-center">
-        <img src="@/assets/logo2.png" alt="Logo" class="mr-2 h-10 w-10 lg:h-14 lg:w-14" />
+        <img src="@/assets/logo3.png" alt="Logo" class="mr-2 h-8 w-10 lg:h-12 lg:w-12" />
         <span class="text-base lg:text-lg font-semibold md:hidden xl:inline 2xl:inline"
           >2D Character Generator AI</span
         >
@@ -162,10 +162,6 @@ const remainingCredits = computed(() => creditStore.remainingCredits)
       class="btn btn-ghost text-base text-white hover:text-primary w-full text-left"
       >Settings</RouterLink
     >
-    <button class="btn btn-ghost text-base text-white hover:text-primary text-left w-full">
-      Logout
-    </button>
-
     <button class="btn btn-primary w-full">
       BUY Credit
       <span class="ml-2 badge badge-outline text-white">{{ remainingCredits }}</span>
@@ -188,8 +184,11 @@ const remainingCredits = computed(() => creditStore.remainingCredits)
           d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
         />
       </svg>
-      Geri Bildirim
+      Feedback
     </button>
+    <button class="btn btn-ghost text-base text-white hover:text-primary text-left w-full">
+      Logout</button
+    >n
   </div>
 
   <!-- Feedback Modal -->
