@@ -64,7 +64,6 @@ const remainingCredits = computed(() => creditStore.remainingCredits)
       </RouterLink>
 
       <div class="hidden md:flex lg:ml-8 space-x-4">
-        <RouterLink to="/pricing" class="btn btn-ghost text-base">Pricing</RouterLink>
         <RouterLink to="/collection" class="btn btn-ghost text-base">Collection</RouterLink>
       </div>
     </div>
@@ -88,10 +87,10 @@ const remainingCredits = computed(() => creditStore.remainingCredits)
       </button>
     </div>
 
-    <button class="btn btn-primary hidden md:inline-flex mr-2">
+    <RouterLink to="/buy-credits" class="btn btn-primary hidden md:inline-flex mr-2">
       BUY Credit
       <span class="ml-2 badge badge-outline text-white bg-black">{{ remainingCredits }}</span>
-    </button>
+    </RouterLink>
 
     <div class="flex-none hidden md:block mr-10">
       <div class="dropdown dropdown-end">
@@ -137,16 +136,6 @@ const remainingCredits = computed(() => creditStore.remainingCredits)
     class="md:hidden flex flex-col items-start bg-base-300 p-4 space-y-4 rounded-lg shadow-lg mx-4"
   >
     <RouterLink
-      to="/pricing"
-      class="btn btn-ghost text-base text-white hover:text-primary w-full text-left"
-      >Pricing</RouterLink
-    >
-    <RouterLink
-      to="/community"
-      class="btn btn-ghost text-base text-white hover:text-primary w-full text-left"
-      >Community</RouterLink
-    >
-    <RouterLink
       to="/collection"
       class="btn btn-ghost text-base text-white hover:text-primary w-full text-left"
       >Collection</RouterLink
@@ -161,10 +150,10 @@ const remainingCredits = computed(() => creditStore.remainingCredits)
       class="btn btn-ghost text-base text-white hover:text-primary w-full text-left"
       >Settings</RouterLink
     >
-    <button class="btn btn-primary w-full">
+    <RouterLink to="/buy-credits" class="btn btn-primary w-full">
       BUY Credit
       <span class="ml-2 badge badge-outline text-white">{{ remainingCredits }}</span>
-    </button>
+    </RouterLink>
     <button
       @click="openFeedbackModal"
       class="hidden sm:flex btn btn-ghost text-base text-white hover:text-primary w-full text-left items-center"
