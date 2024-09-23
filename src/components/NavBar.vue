@@ -64,6 +64,7 @@ const remainingCredits = computed(() => creditStore.remainingCredits)
       </RouterLink>
 
       <div class="hidden md:flex lg:ml-8 space-x-4">
+        <RouterLink to="/generate" class="btn btn-ghost text-base">Generate</RouterLink>
         <RouterLink to="/collection" class="btn btn-ghost text-base">Collection</RouterLink>
       </div>
     </div>

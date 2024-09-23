@@ -22,7 +22,7 @@
           <div class="relative">
             <div class="carousel w-[600px] h-[400px]">
               <div
-                v-for="n in 5"
+                v-for="n in 6"
                 :key="n"
                 :id="`slide${n}`"
                 class="carousel-item relative w-full h-full"
@@ -523,7 +523,7 @@ import { ref, onMounted } from 'vue'
 export default {
   setup() {
     const currentSlide = ref(1)
-    const totalSlides = 5
+    const totalSlides = 6
 
     // Slayt gösterisini başlat
     const startSlideshow = () => {
