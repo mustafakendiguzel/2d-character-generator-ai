@@ -156,7 +156,7 @@ export default {
         description:
           'Create custom 2D characters for your game using our AI-driven character generator.',
         icon: new URL('@/assets/icons/character.png', import.meta.url).href,
-        route: '/character-generation',
+        route: 'generate/character-generation',
         modalDescription: 'Detailed information about character generation.'
       },
       {
@@ -164,7 +164,7 @@ export default {
         title: 'Item Generator',
         description: 'Generate unique items for your game with ease.',
         icon: new URL('@/assets/icons/item.png', import.meta.url).href,
-        route: '/item-generator',
+        route: 'generate/item-generator',
         modalDescription: 'Detailed information about item generation.'
       },
       {
@@ -172,7 +172,7 @@ export default {
         title: 'Background Generator (Soon)',
         description: 'Coming soon: Create stunning backgrounds for your game.',
         icon: new URL('@/assets/icons/background.png', import.meta.url).href,
-        route: '/background-generator',
+        route: 'generate/background-generator',
         modalDescription: 'Detailed information about background generation.'
       },
       {
@@ -180,7 +180,7 @@ export default {
         title: 'Icon and Symbol Generator (Soon)',
         description: 'Coming soon: Generate icons and symbols for your game.',
         icon: new URL('@/assets/icons/icon.png', import.meta.url).href,
-        route: '/icon-generator',
+        route: 'generate/icon-generator',
         modalDescription: 'Detailed information about icon and symbol generation.'
       }
     ]
@@ -191,7 +191,7 @@ export default {
         title: 'Single Character (Soon)',
         description: 'Coming soon: Create detailed single characters for your game.',
         icon: new URL('@/assets/icons/background.png', import.meta.url).href,
-        route: '/single-character-generator',
+        route: 'generate/single-character-generator',
         modalDescription: 'Detailed information about single character generation.'
       },
       {
@@ -199,7 +199,7 @@ export default {
         title: 'Icon and Symbol Generator (Soon)',
         description: 'Coming soon: Generate advanced icons and symbols for your game.',
         icon: new URL('@/assets/icons/icon.png', import.meta.url).href,
-        route: '/deep-icon-generator',
+        route: 'generate/deep-icon-generator',
         modalDescription: 'Detailed information about advanced icon and symbol generation.'
       }
     ]

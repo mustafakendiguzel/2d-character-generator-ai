@@ -31,32 +31,32 @@ const router = createRouter({
     },
     // Yeni eklenen rotalar
     {
-      path: '/character-generation',
+      path: '/generate/character-generation',
       name: 'character-generation',
       component: () => import('@/views/CharacterGenerationView.vue')
     },
     {
-      path: '/item-generator',
+      path: '/generate/item-generator',
       name: 'item-generator',
       component: () => import('@/views/ItemGeneratorView.vue')
     },
     {
-      path: '/background-generator',
+      path: '/generate/background-generator',
       name: 'background-generator',
       component: () => import('@/views/BackgroundGeneratorView.vue')
     },
     {
-      path: '/icon-generator',
+      path: '/generate/icon-generator',
       name: 'icon-generator',
       component: () => import('@/views/IconGeneratorView.vue')
     },
     {
-      path: '/single-character-generator',
+      path: '/generate/single-character-generator',
       name: 'single-character-generator',
       component: () => import('@/views/SingleCharacterGeneratorView.vue')
     },
     {
-      path: '/deep-icon-generator',
+      path: '/generate/deep-icon-generator',
       name: 'deep-icon-generator',
       component: () => import('@/views/DeepIconGeneratorView.vue')
     }

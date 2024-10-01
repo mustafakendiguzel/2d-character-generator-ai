@@ -93,12 +93,15 @@
           <dl
             class="grid max-w-xl grid-cols-1 gap-x-8 gap-y-10 lg:max-w-none lg:grid-cols-2 lg:gap-y-16 xl:grid-cols-3"
           >
-            <div class="relative pl-16">
+            <div class="relative pl-16" v-for="(option, index) in options" :key="index">
               <dt class="font-semibold">
                 <div
-                  class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-purple-500"
+                  class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg"
+                  :class="getRandomColor()"
                 >
+                  <!-- SVG ikonları buraya -->
                   <svg
+                    v-if="option.icon === 'refresh'"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -114,20 +117,8 @@
                       d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
                     ></path>
                   </svg>
-                </div>
-                Quick Feedback Loop
-              </dt>
-              <dd class="mt-2 dark:text-gray-300">
-                Our characters generate within seconds so you can continuously fine-tune your prompt
-                and character options to find the best fit for your needs.
-              </dd>
-            </div>
-            <div class="relative pl-16">
-              <dt class="font-semibold">
-                <div
-                  class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-purple-500"
-                >
                   <svg
+                    v-else-if="option.icon === 'cloud'"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -143,20 +134,8 @@
                       d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z"
                     ></path>
                   </svg>
-                </div>
-                Manage your Collection
-              </dt>
-              <dd class="mt-2 dark:text-gray-300">
-                We store all characters you've generated in the cloud, so you'll never need to
-                manage your collection yourself.
-              </dd>
-            </div>
-            <div class="relative pl-16">
-              <dt class="font-semibold">
-                <div
-                  class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-purple-500"
-                >
                   <svg
+                    v-else-if="option.icon === 'cog'"
                     stroke="black"
                     fill="black"
                     stroke-width="0"
@@ -168,23 +147,11 @@
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
-                      d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"
+                      d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.1c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"
                     ></path>
                   </svg>
-                </div>
-                Variety of Options
-              </dt>
-              <dd class="mt-2 dark:text-gray-300">
-                Diversify your character designs with our various presets that help you create the
-                characters of your dreams.
-              </dd>
-            </div>
-            <div class="relative pl-16">
-              <dt class="font-semibold">
-                <div
-                  class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-purple-500"
-                >
                   <svg
+                    v-else-if="option.icon === 'dollar'"
                     stroke="black"
                     fill="black"
                     stroke-width="0"
@@ -199,20 +166,8 @@
                       d="M12.0049 22.0029C6.48204 22.0029 2.00488 17.5258 2.00488 12.0029C2.00488 6.48008 6.48204 2.00293 12.0049 2.00293C17.5277 2.00293 22.0049 6.48008 22.0049 12.0029C22.0049 17.5258 17.5277 22.0029 12.0049 22.0029ZM8.50488 14.0029V16.0029H11.0049V18.0029H13.0049V16.0029H14.0049C15.3856 16.0029 16.5049 14.8836 16.5049 13.5029C16.5049 12.1222 15.3856 11.0029 14.0049 11.0029H10.0049C9.72874 11.0029 9.50488 10.7791 9.50488 10.5029C9.50488 10.2268 9.72874 10.0029 10.0049 10.0029H15.5049V8.00293H13.0049V6.00293H11.0049V8.00293H10.0049C8.62417 8.00293 7.50488 9.12222 7.50488 10.5029C7.50488 11.8836 8.62417 13.0029 10.0049 13.0029H14.0049C14.281 13.0029 14.5049 13.2268 14.5049 13.5029C14.5049 13.7791 14.281 14.0029 14.0049 14.0029H8.50488Z"
                     ></path>
                   </svg>
-                </div>
-                Affordable Prices
-              </dt>
-              <dd class="mt-2 dark:text-gray-300">
-                Diversify your character designs with our various presets that help you create the
-                characters of your dreams.
-              </dd>
-            </div>
-            <div class="relative pl-16">
-              <dt class="font-semibold">
-                <div
-                  class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-purple-500"
-                >
                   <svg
+                    v-else-if="option.icon === 'hd'"
                     stroke="black"
                     fill="black"
                     stroke-width="0"
@@ -229,11 +184,10 @@
                     ></path>
                   </svg>
                 </div>
-                High Resolution
+                {{ option.title }}
               </dt>
               <dd class="mt-2 dark:text-gray-300">
-                Your characters are created in high resolution, so you can modify them in your
-                favorite image editor as needed.
+                {{ option.description }}
               </dd>
             </div>
           </dl>
@@ -241,173 +195,66 @@
       </section>
       <section class="mx-auto mb-24 max-w-7xl px-8 xl:max-w-screen-lg">
         <div class="container relative z-10 mx-auto">
-          <h2 class="mb-16 text-left text-4xl md:text-center">What our users are saying</h2>
-          <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-            <div class="rounded-4xl h-full border bg-gray-600 bg-opacity-60 p-6">
-              <div class="flex h-full flex-col justify-between">
-                <div class="mb-5 block">
-                  <header class="-m-2 mb-4 flex flex-wrap">
-                    <div class="w-auto p-2">
-                      <img
-                        width="50"
-                        height="50"
-                        src="@/assets/user-photos/hagen.jpeg"
-                        alt="image of man in red"
-                      />
+          <h2 class="mb-16 text-left text-4xl md:text-center">Kullanıcılarımız ne diyor</h2>
+          <div class="flex justify-center">
+            <div class="grid grid-cols-1 gap-8 md:grid-cols-2 max-w-4xl">
+              <div class="rounded-4xl h-full border bg-gray-600 bg-opacity-60 p-6">
+                <div class="flex h-full flex-col justify-between">
+                  <div class="mb-5 block">
+                    <header class="-m-2 mb-4 flex flex-wrap">
+                      <div class="w-auto p-2">
+                        <img
+                          width="50"
+                          height="50"
+                          src="@/assets/user-photos/hagen.jpeg"
+                          alt="kırmızı giyimli adam resmi"
+                        />
+                      </div>
+                      <div class="w-auto p-2">
+                        <h3 class="font-semibold leading-normal">Hagen</h3>
+                        <p class="uppercase text-gray-300">@HAGEN</p>
+                      </div>
+                    </header>
+                    <div class="flex items-center">
+                      <!-- Yıldız ikonları burada -->
                     </div>
-                    <div class="w-auto p-2">
-                      <h3 class="font-semibold leading-normal">Hagen</h3>
-                      <p class="uppercase text-gray-300">@HAGEN</p>
-                    </div>
-                  </header>
-                  <div class="flex items-center">
-                    <svg
-                      aria-hidden="true"
-                      class="h-5 w-5 text-yellow-400"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <title>First star</title>
-                      <path
-                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                      ></path></svg
-                    ><svg
-                      aria-hidden="true"
-                      class="h-5 w-5 text-yellow-400"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <title>Second star</title>
-                      <path
-                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                      ></path></svg
-                    ><svg
-                      aria-hidden="true"
-                      class="h-5 w-5 text-yellow-400"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <title>Third star</title>
-                      <path
-                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                      ></path></svg
-                    ><svg
-                      aria-hidden="true"
-                      class="h-5 w-5 text-yellow-400"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <title>Fourth star</title>
-                      <path
-                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                      ></path></svg
-                    ><svg
-                      aria-hidden="true"
-                      class="h-5 w-5 text-yellow-400"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <title>Fifth star</title>
-                      <path
-                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                      ></path>
-                    </svg>
+                    <p class="mt-6 text-lg font-medium">
+                      Creating custom 2D characters for my game has never been easier! The interface
+                      is simple, and the results are incredibly detailed. I love how I can tweak
+                      every little aspect of my characters before using them in my game. Highly
+                      recommended!
+                    </p>
                   </div>
-                  <p class="mt-6 text-lg font-medium">
-                    Creating custom 2D characters for my game has never been easier! The interface
-                    is simple, and the results are incredibly detailed. I love how I can tweak every
-                    little aspect of my characters before using them in my game. Highly recommended!
-                  </p>
                 </div>
               </div>
-            </div>
 
-            <div class="rounded-4xl h-full border bg-gray-600 bg-opacity-60 p-6">
-              <div class="flex h-full flex-col justify-between">
-                <div class="mb-5 block">
-                  <header class="-m-2 mb-4 flex flex-wrap">
-                    <div class="w-auto p-2">
-                      <img
-                        width="50"
-                        height="50"
-                        src="@/assets/user-photos/seanethan.jpeg"
-                        alt="image of man in red"
-                      />
+              <div class="rounded-4xl h-full border bg-gray-600 bg-opacity-60 p-6">
+                <div class="flex h-full flex-col justify-between">
+                  <div class="mb-5 block">
+                    <header class="-m-2 mb-4 flex flex-wrap">
+                      <div class="w-auto p-2">
+                        <img
+                          width="50"
+                          height="50"
+                          src="@/assets/user-photos/seanethan.jpeg"
+                          alt="kırmızı giyimli adam resmi"
+                        />
+                      </div>
+                      <div class="w-auto p-2">
+                        <h3 class="font-semibold leading-normal">Sean Ethan</h3>
+                        <p class="uppercase text-gray-300">@seanethan</p>
+                      </div>
+                    </header>
+                    <div class="flex items-center">
+                      <!-- Yıldız ikonları burada -->
                     </div>
-                    <div class="w-auto p-2">
-                      <h3 class="font-semibold leading-normal">Sean Ethan</h3>
-                      <p class="uppercase text-gray-300">@seanethan</p>
-                    </div>
-                  </header>
-                  <div class="flex items-center">
-                    <svg
-                      aria-hidden="true"
-                      class="h-5 w-5 text-yellow-400"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <title>First star</title>
-                      <path
-                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                      ></path></svg
-                    ><svg
-                      aria-hidden="true"
-                      class="h-5 w-5 text-yellow-400"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <title>Second star</title>
-                      <path
-                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                      ></path></svg
-                    ><svg
-                      aria-hidden="true"
-                      class="h-5 w-5 text-yellow-400"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <title>Third star</title>
-                      <path
-                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                      ></path></svg
-                    ><svg
-                      aria-hidden="true"
-                      class="h-5 w-5 text-yellow-400"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <title>Fourth star</title>
-                      <path
-                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                      ></path></svg
-                    ><svg
-                      aria-hidden="true"
-                      class="h-5 w-5 text-yellow-400"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <title>Fifth star</title>
-                      <path
-                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                      ></path>
-                    </svg>
+                    <p class="mt-6 text-lg font-medium">
+                      This platform is a game-changer for indie developers. It saves me tons of time
+                      and resources by allowing me to design 2D characters exactly how I envision
+                      them. The customization options are limitless, and the final designs fit
+                      perfectly in my projects!
+                    </p>
                   </div>
-                  <p class="mt-6 text-lg font-medium">
-                    This platform is a game-changer for indie developers. It saves me tons of time
-                    and resources by allowing me to design 2D characters exactly how I envision
-                    them. The customization options are limitless, and the final designs fit
-                    perfectly in my projects!
-                  </p>
                 </div>
               </div>
             </div>
@@ -519,6 +366,60 @@ export default {
       }, 5000) // 5000 milisaniye = 5 saniye
     }
 
+    const options = [
+      {
+        icon: 'refresh',
+        title: 'Quick Feedback Loop',
+        description:
+          'Our characters generate within seconds so you can continuously fine-tune your prompt and character options to find the best fit for your needs.'
+      },
+      {
+        icon: 'cloud',
+        title: 'Manage your Collection',
+        description:
+          "We store all characters you've generated in the cloud, so you'll never need to manage your collection yourself."
+      },
+      {
+        icon: 'cog',
+        title: 'Variety of Options',
+        description:
+          'Diversify your character designs with our various presets that help you create the characters of your dreams.'
+      },
+      {
+        icon: 'dollar',
+        title: 'Affordable Prices',
+        description:
+          'Get high-quality 2D characters at a fraction of the cost of hiring a professional designer.'
+      },
+      {
+        icon: 'hd',
+        title: 'High Resolution',
+        description:
+          'Your characters are created in high resolution, so you can modify them in your favorite image editor as needed.'
+      }
+    ]
+
+    const getRandomColor = () => {
+      const colors = [
+        'bg-red-500',
+        'bg-blue-500',
+        'bg-green-500',
+        'bg-yellow-500',
+        'bg-indigo-500',
+        'bg-purple-500',
+        'bg-pink-500',
+        'bg-orange-500',
+        'bg-teal-500',
+        'bg-cyan-500',
+        'bg-lime-500',
+        'bg-amber-500',
+        'bg-emerald-500',
+        'bg-sky-500',
+        'bg-violet-500'
+      ]
+      return colors[Math.floor(Math.random() * colors.length)]
+    }
+
     // Sonraki slayta geç
     const nextSlide = () => {
       currentSlide.value = (currentSlide.value % totalSlides) + 1
@@ -542,7 +443,9 @@ export default {
       currentSlide,
       nextSlide,
       prevSlide,
-      getBannerImage
+      getBannerImage,
+      options,
+      getRandomColor
     }
   }
 }
