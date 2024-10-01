@@ -4,7 +4,7 @@
       <div
         v-for="(box, index) in boxes"
         :key="index"
-        class="w-full md:w-2/3 p-6 rounded-lg bg-gray-800 hover:bg-gray-700 cursor-pointer flex flex-col h-[600px] relative overflow-hidden group"
+        class="w-full md:w-2/3 p-6 rounded-lg bg-gray-800 hover:bg-gray-700 cursor-pointer flex flex-col h-auto md:h-[500px] relative overflow-hidden group"
         @click="handleBoxClick(box)"
       >
         <div v-if="!box.isOpen" class="h-full flex flex-col">
@@ -16,14 +16,14 @@
             v-if="box.image"
             :src="box.image"
             :alt="box.title"
-            class="mt-4 w-full h-100 object-contain rounded-lg"
+            class="mt-4 w-full h-auto max-h-[300px] object-contain rounded-lg"
           />
         </div>
 
         <!-- Yeni hover kutusu -->
         <div
           v-if="box.hoverImage"
-          class="absolute right-0 top-1/2 transform -translate-y-1/2 transition-all duration-500 ease-in-out translate-x-full group-hover:translate-x-0"
+          class="absolute right-0 top-1/2 transform -translate-y-1/2 transition-all duration-500 ease-in-out translate-x-full group-hover:translate-x-0 hidden md:block"
         >
           <div class="bg-gray-300 group-hover:bg-opacity-30 p-4 rounded-l-lg shadow-lg">
             <img
@@ -134,5 +134,12 @@ export default {
 /* Yeni stil */
 .group:not(:hover) .translate-x-full {
   transform: translateY(-50%) translateX(calc(100% - 10px));
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
 }
 </style>
