@@ -197,64 +197,46 @@
         <div class="container relative z-10 mx-auto">
           <h2 class="mb-16 text-left text-4xl md:text-center">Kullanıcılarımız ne diyor</h2>
           <div class="flex justify-center">
-            <div class="grid grid-cols-1 gap-8 md:grid-cols-2 max-w-4xl">
-              <div class="rounded-4xl h-full border bg-gray-600 bg-opacity-60 p-6">
-                <div class="flex h-full flex-col justify-between">
-                  <div class="mb-5 block">
-                    <header class="-m-2 mb-4 flex flex-wrap">
-                      <div class="w-auto p-2">
-                        <img
-                          width="50"
-                          height="50"
-                          src="@/assets/user-photos/hagen.jpeg"
-                          alt="kırmızı giyimli adam resmi"
-                        />
+            <div class="w-full md:grid md:grid-cols-2 md:gap-8 md:max-w-4xl">
+              <div
+                class="relative overflow-hidden"
+                @touchstart="touchStart"
+                @touchmove="touchMove"
+                @touchend="touchEnd"
+              >
+                <div
+                  class="flex transition-transform duration-300 ease-in-out"
+                  :style="{ transform: `translateX(-${currentReview * 100}%)` }"
+                >
+                  <div v-for="(review, index) in reviews" :key="index" class="w-full flex-shrink-0">
+                    <div class="rounded-4xl h-full border bg-gray-600 bg-opacity-60 p-6">
+                      <div class="flex h-full flex-col justify-between">
+                        <div class="mb-5 block">
+                          <header class="-m-2 mb-4 flex flex-wrap">
+                            <div class="w-auto p-2">
+                              <img width="50" height="50" :src="review.image" :alt="review.name" />
+                            </div>
+                            <div class="w-auto p-2">
+                              <h3 class="font-semibold leading-normal">{{ review.name }}</h3>
+                              <p class="uppercase text-gray-300">{{ review.username }}</p>
+                            </div>
+                          </header>
+                          <p class="mt-6 text-lg font-medium">
+                            {{ review.comment }}
+                          </p>
+                        </div>
                       </div>
-                      <div class="w-auto p-2">
-                        <h3 class="font-semibold leading-normal">Hagen</h3>
-                        <p class="uppercase text-gray-300">@HAGEN</p>
-                      </div>
-                    </header>
-                    <div class="flex items-center">
-                      <!-- Yıldız ikonları burada -->
                     </div>
-                    <p class="mt-6 text-lg font-medium">
-                      Creating custom 2D characters for my game has never been easier! The interface
-                      is simple, and the results are incredibly detailed. I love how I can tweak
-                      every little aspect of my characters before using them in my game. Highly
-                      recommended!
-                    </p>
                   </div>
                 </div>
-              </div>
-
-              <div class="rounded-4xl h-full border bg-gray-600 bg-opacity-60 p-6">
-                <div class="flex h-full flex-col justify-between">
-                  <div class="mb-5 block">
-                    <header class="-m-2 mb-4 flex flex-wrap">
-                      <div class="w-auto p-2">
-                        <img
-                          width="50"
-                          height="50"
-                          src="@/assets/user-photos/seanethan.jpeg"
-                          alt="kırmızı giyimli adam resmi"
-                        />
-                      </div>
-                      <div class="w-auto p-2">
-                        <h3 class="font-semibold leading-normal">Sean Ethan</h3>
-                        <p class="uppercase text-gray-300">@seanethan</p>
-                      </div>
-                    </header>
-                    <div class="flex items-center">
-                      <!-- Yıldız ikonları burada -->
-                    </div>
-                    <p class="mt-6 text-lg font-medium">
-                      This platform is a game-changer for indie developers. It saves me tons of time
-                      and resources by allowing me to design 2D characters exactly how I envision
-                      them. The customization options are limitless, and the final designs fit
-                      perfectly in my projects!
-                    </p>
-                  </div>
+                <div class="mt-4 flex justify-center md:hidden">
+                  <button
+                    v-for="(_, index) in reviews"
+                    :key="index"
+                    @click="currentReview = index"
+                    class="mx-1 h-3 w-3 rounded-full bg-gray-300"
+                    :class="{ 'bg-blue-500': currentReview === index }"
+                  ></button>
                 </div>
               </div>
             </div>
@@ -435,6 +417,52 @@ export default {
       return new URL(`../assets/character-examples/banner${n}.jpg`, import.meta.url).href
     }
 
+    const reviews = [
+      {
+        name: 'Hagen',
+        username: '@HAGEN',
+        image: new URL('@/assets/user-photos/hagen.jpeg', import.meta.url).href,
+        comment:
+          'Creating custom 2D characters for my game has never been easier! The interface is simple, and the results are incredibly detailed. I love how I can tweak every little aspect of my characters before using them in my game. Highly recommended!'
+      },
+      {
+        name: 'Sean Ethan',
+        username: '@seanethan',
+        image: new URL('@/assets/user-photos/seanethan.jpeg', import.meta.url).href,
+        comment:
+          'This platform is a game-changer for indie developers. It saves me tons of time and resources by allowing me to design 2D characters exactly how I envision them. The customization options are limitless, and the final designs fit perfectly in my projects!'
+      }
+    ]
+
+    const currentReview = ref(0)
+    const touchStartX = ref(0)
+    const touchEndX = ref(0)
+
+    const nextReview = () => {
+      currentReview.value = (currentReview.value + 1) % reviews.length
+    }
+
+    const prevReview = () => {
+      currentReview.value = currentReview.value === 0 ? reviews.length - 1 : currentReview.value - 1
+    }
+
+    const touchStart = (e) => {
+      touchStartX.value = e.touches[0].clientX
+    }
+
+    const touchMove = (e) => {
+      touchEndX.value = e.touches[0].clientX
+    }
+
+    const touchEnd = () => {
+      if (touchStartX.value - touchEndX.value > 50) {
+        nextReview()
+      }
+      if (touchEndX.value - touchStartX.value > 50) {
+        prevReview()
+      }
+    }
+
     onMounted(() => {
       startSlideshow()
     })
@@ -445,8 +473,23 @@ export default {
       prevSlide,
       getBannerImage,
       options,
-      getRandomColor
+      getRandomColor,
+      reviews,
+      currentReview,
+      nextReview,
+      prevReview,
+      touchStart,
+      touchMove,
+      touchEnd
     }
   }
 }
 </script>
+
+<style scoped>
+@media (max-width: 768px) {
+  .rounded-4xl {
+    border-radius: 1rem;
+  }
+}
+</style>
