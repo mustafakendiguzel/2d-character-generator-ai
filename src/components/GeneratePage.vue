@@ -5,14 +5,14 @@
         <button
           @click="selectGenerator('generator')"
           :class="buttonClass('generator')"
-          class="absolute border-2 border-gray-200 top-0 left-0 w-1/2 h-full rounded-full z-10 transition-all duration-300"
+          class="absolute border-gray-200 top-0 left-0 w-1/2 h-full rounded-full z-10 transition-all duration-300"
         >
           Generator
         </button>
         <button
           @click="selectGenerator('deep-generator')"
           :class="buttonClass('deep-generator')"
-          class="absolute border-2 border-gray-200 top-0 right-0 w-1/2 h-full rounded-full z-10 transition-all duration-300"
+          class="absolute border-gray-200 top-0 right-0 w-1/2 h-full rounded-full z-10 transition-all duration-300"
         >
           Deep Generator
         </button>
@@ -57,7 +57,7 @@
             </svg>
             <div
               v-if="showModal === 'character'"
-              class="absolute top-0 right-0 mt-2 mr-2 w-64 bg-gray-800 bg-opacity-75 p-4 rounded-lg shadow-lg transition-opacity duration-300 opacity-90 z-20"
+              class="absolute top-0 right-0 mt-2 mr-2 w-64 bg-gray-800 bg-opacity-100 p-4 rounded-lg shadow-lg transition-opacity duration-300 opacity-90 z-20"
               :style="{ transform: 'translate(50%, -10%)' }"
             >
               <h3 class="text-lg font-bold">Character Generation</h3>
@@ -93,7 +93,7 @@
             </svg>
             <div
               v-if="showModal === 'item'"
-              class="absolute top-0 right-0 mt-2 mr-2 w-64 bg-gray-800 bg-opacity-75 p-4 rounded-lg shadow-lg transition-opacity duration-300 opacity-90 z-20"
+              class="absolute top-0 right-0 mt-2 mr-2 w-64 bg-gray-800 bg-opacity-100 p-4 rounded-lg shadow-lg transition-opacity duration-300 opacity-90 z-20"
               :style="{ transform: 'translate(50%, -10%)' }"
             >
               <h3 class="text-lg font-bold">Item Generator</h3>
@@ -129,7 +129,7 @@
             </svg>
             <div
               v-if="showModal === 'background'"
-              class="absolute top-0 right-0 mt-2 mr-2 w-64 bg-gray-800 bg-opacity-75 p-4 rounded-lg shadow-lg transition-opacity duration-300 opacity-90 z-20"
+              class="absolute top-0 right-0 mt-2 mr-2 w-64 bg-gray-800 bg-opacity-100 p-4 rounded-lg shadow-lg transition-opacity duration-300 opacity-90 z-20"
               :style="{ transform: 'translate(50%, -10%)' }"
             >
               <h3 class="text-lg font-bold">Background Generator</h3>
@@ -165,7 +165,7 @@
             </svg>
             <div
               v-if="showModal === 'icon'"
-              class="absolute top-0 right-0 mt-2 mr-2 w-64 bg-gray-800 bg-opacity-75 p-4 rounded-lg shadow-lg transition-opacity duration-300 opacity-90 z-20"
+              class="absolute top-0 right-0 mt-2 mr-2 w-64 bg-gray-800 bg-opacity-100 p-4 rounded-lg shadow-lg transition-opacity duration-300 opacity-90 z-20"
               :style="{ transform: 'translate(50%, -10%)' }"
             >
               <h3 class="text-lg font-bold">Icon and Symbol Generator</h3>
@@ -203,7 +203,7 @@
             </svg>
             <div
               v-if="showModal === 'single-character'"
-              class="absolute top-0 right-0 mt-2 mr-2 w-64 bg-gray-800 bg-opacity-75 p-4 rounded-lg shadow-lg transition-opacity duration-300 opacity-90 z-20"
+              class="absolute top-0 right-0 mt-2 mr-2 w-64 bg-gray-800 bg-opacity-100 p-4 rounded-lg shadow-lg transition-opacity duration-300 opacity-90 z-20"
               :style="{ transform: 'translate(50%, -10%)' }"
             >
               <h3 class="text-lg font-bold">Single Character</h3>
@@ -239,7 +239,7 @@
             </svg>
             <div
               v-if="showModal === 'deep-icon'"
-              class="absolute top-0 right-2 mt-2 mr-2 w-64 bg-gray-800 bg-opacity-75 p-4 rounded-lg shadow-lg transition-opacity duration-300 opacity-90 z-20"
+              class="absolute top-0 right-2 mt-2 mr-2 w-64 bg-gray-800 bg-opacity-100 p-4 rounded-lg shadow-lg transition-opacity duration-300 opacity-90 z-20"
               :style="{ transform: 'translate(50%, -10%)' }"
             >
               <h3 class="text-lg font-bold">Icon and Symbol Generator</h3>
