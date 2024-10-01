@@ -147,7 +147,7 @@
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
-                      d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.1c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"
+                      d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105-.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.1c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"
                     ></path>
                   </svg>
                   <svg
@@ -195,9 +195,10 @@
       </section>
       <section class="mx-auto mb-24 max-w-7xl px-8 xl:max-w-screen-lg">
         <div class="container relative z-10 mx-auto">
-          <h2 class="mb-16 text-left text-4xl md:text-center">Kullanıcılarımız ne diyor</h2>
+          <h2 class="mb-16 text-left text-4xl md:text-center">What our users say</h2>
           <div class="flex justify-center">
-            <div class="w-full md:grid md:grid-cols-2 md:gap-8 md:max-w-4xl">
+            <!-- Mobil görünüm için carousel -->
+            <div class="w-full md:hidden">
               <div
                 class="relative overflow-hidden"
                 @touchstart="touchStart"
@@ -229,7 +230,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="mt-4 flex justify-center md:hidden">
+                <div class="mt-4 flex justify-center">
                   <button
                     v-for="(_, index) in reviews"
                     :key="index"
@@ -237,6 +238,32 @@
                     class="mx-1 h-3 w-3 rounded-full bg-gray-300"
                     :class="{ 'bg-blue-500': currentReview === index }"
                   ></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Büyük ekranlar için grid yapısı -->
+            <div class="hidden md:flex md:flex-wrap md:justify-center md:gap-8">
+              <div
+                v-for="(review, index) in reviews"
+                :key="index"
+                class="rounded-4xl border bg-gray-600 bg-opacity-60 p-6 md:w-[calc(33.333%-1rem)] mb-8"
+              >
+                <div class="flex h-full flex-col justify-between">
+                  <div class="mb-5 block">
+                    <header class="-m-2 mb-4 flex flex-wrap">
+                      <div class="w-auto p-2">
+                        <img width="50" height="50" :src="review.image" :alt="review.name" />
+                      </div>
+                      <div class="w-auto p-2">
+                        <h3 class="font-semibold leading-normal">{{ review.name }}</h3>
+                        <p class="uppercase text-gray-300">{{ review.username }}</p>
+                      </div>
+                    </header>
+                    <p class="mt-6 text-lg font-medium">
+                      {{ review.comment }}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
