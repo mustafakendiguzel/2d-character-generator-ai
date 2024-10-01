@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import LandingPage from '@/components/LandingPage.vue'
 import GeneratePage from '@/components/GeneratePage.vue'
 
+// @ts-ignore
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -21,12 +22,43 @@ const router = createRouter({
     {
       path: '/generate',
       name: 'generate',
-      component: () => GeneratePage
+      component: GeneratePage
     },
     {
       path: '/buy-credits',
       name: 'buy-credits',
       component: () => import('../views/BuyCreditView.vue')
+    },
+    // Yeni eklenen rotalar
+    {
+      path: '/character-generation',
+      name: 'character-generation',
+      component: () => import('@/views/CharacterGenerationView.vue')
+    },
+    {
+      path: '/item-generator',
+      name: 'item-generator',
+      component: () => import('@/views/ItemGeneratorView.vue')
+    },
+    {
+      path: '/background-generator',
+      name: 'background-generator',
+      component: () => import('@/views/BackgroundGeneratorView.vue')
+    },
+    {
+      path: '/icon-generator',
+      name: 'icon-generator',
+      component: () => import('@/views/IconGeneratorView.vue')
+    },
+    {
+      path: '/single-character-generator',
+      name: 'single-character-generator',
+      component: () => import('@/views/SingleCharacterGeneratorView.vue')
+    },
+    {
+      path: '/deep-icon-generator',
+      name: 'deep-icon-generator',
+      component: () => import('@/views/DeepIconGeneratorView.vue')
     }
   ]
 })

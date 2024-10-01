@@ -9,6 +9,8 @@
     }
   ],
   "compilerOptions": {
+    "noImplicitAny": false,
+    "allowJs": true,
     "paths": {
       "@/*": ["./*"]
     }

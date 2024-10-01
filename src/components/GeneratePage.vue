@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto py-8">
+  <div class="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
     <div class="flex justify-center mb-8">
       <div class="relative w-64 h-12 bg-gray-200 rounded-full">
         <button
@@ -26,26 +26,27 @@
       <div
         v-if="selectedGenerator === 'generator'"
         key="generator"
-        class="grid grid-cols-1 md:grid-cols-3 gap-8"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
       >
         <div
+          v-for="item in generatorItems"
+          :key="item.name"
           class="p-6 rounded-lg hover:bg-gray-700 cursor-pointer bg-gray-800 flex flex-col h-full relative"
+          @click="navigateTo(item.route)"
         >
           <div class="flex items-center mb-4">
-            <img src="@/assets/icons/character.png" alt="Character Icon" class="w-12 h-12 mr-2" />
-            <h2 class="text-2xl font-bold text-slate-300">Character Generation</h2>
+            <img :src="item.icon" :alt="`${item.name} Icon`" class="w-12 h-12 mr-2" />
+            <h2 class="text-2xl font-bold text-slate-300">{{ item.title }}</h2>
           </div>
-          <p class="flex-grow">
-            Create custom 2D characters for your game using our AI-driven character generator.
-          </p>
+          <p class="flex-grow text-white">{{ item.description }}</p>
           <div class="absolute top-0 right-0 p-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
+              class="h-5 w-5 text-white"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
-              @mouseover="showModal = 'character'"
+              @mouseover="showModal = item.name"
               @mouseleave="showModal = null"
             >
               <path
@@ -56,142 +57,40 @@
               />
             </svg>
             <div
-              v-if="showModal === 'character'"
+              v-if="showModal === item.name"
               class="absolute top-0 right-0 mt-2 mr-2 w-64 bg-gray-800 bg-opacity-100 p-4 rounded-lg shadow-lg transition-opacity duration-300 opacity-90 z-20"
               :style="{ transform: 'translate(50%, -10%)' }"
             >
-              <h3 class="text-lg font-bold">Character Generation</h3>
-              <p>Detailed information about character generation.</p>
-              <img src="" alt="Character Details" class="mt-2" />
-            </div>
-          </div>
-        </div>
-        <div
-          class="p-6 rounded-lg hover:bg-gray-700 cursor-pointer bg-gray-800 flex flex-col h-full relative"
-        >
-          <div class="flex items-center mb-4">
-            <img src="@/assets/icons/item.png" alt="Item Icon" class="w-12 h-12 mr-2" />
-            <h2 class="text-2xl font-bold text-slate-300">Item Generator</h2>
-          </div>
-          <p class="flex-grow">Generate unique items for your game with ease.</p>
-          <div class="absolute top-0 right-0 p-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              @mouseover="showModal = 'item'"
-              @mouseleave="showModal = null"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <div
-              v-if="showModal === 'item'"
-              class="absolute top-0 right-0 mt-2 mr-2 w-64 bg-gray-800 bg-opacity-100 p-4 rounded-lg shadow-lg transition-opacity duration-300 opacity-90 z-20"
-              :style="{ transform: 'translate(50%, -10%)' }"
-            >
-              <h3 class="text-lg font-bold">Item Generator</h3>
-              <p>Detailed information about item generation.</p>
-              <img src="" alt="Item Details" class="mt-2" />
-            </div>
-          </div>
-        </div>
-        <div
-          class="p-6 rounded-lg hover:bg-gray-700 cursor-pointer bg-gray-800 flex flex-col h-full relative"
-        >
-          <div class="flex items-center mb-4">
-            <img src="@/assets/icons/background.png" alt="Background Icon" class="w-12 h-12 mr-2" />
-            <h2 class="text-2xl font-bold text-slate-300">Background Generator (Soon)</h2>
-          </div>
-          <p class="flex-grow">Coming soon: Create stunning backgrounds for your game.</p>
-          <div class="absolute top-0 right-0 p-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              @mouseover="showModal = 'background'"
-              @mouseleave="showModal = null"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <div
-              v-if="showModal === 'background'"
-              class="absolute top-0 right-0 mt-2 mr-2 w-64 bg-gray-800 bg-opacity-100 p-4 rounded-lg shadow-lg transition-opacity duration-300 opacity-90 z-20"
-              :style="{ transform: 'translate(50%, -10%)' }"
-            >
-              <h3 class="text-lg font-bold">Background Generator</h3>
-              <p>Detailed information about background generation.</p>
-              <img src="" alt="Background Details" class="mt-2" />
-            </div>
-          </div>
-        </div>
-        <div
-          class="p-6 rounded-lg hover:bg-gray-700 cursor-pointer bg-gray-800 flex flex-col h-full relative"
-        >
-          <div class="flex items-center mb-4">
-            <img src="@/assets/icons/icon.png" alt="Icon and Symbol Icon" class="w-12 h-12 mr-2" />
-            <h2 class="text-2xl font-bold text-slate-300">Icon and Symbol Generator (Soon)</h2>
-          </div>
-          <p class="flex-grow">Coming soon: Generate icons and symbols for your game.</p>
-          <div class="absolute top-0 right-0 p-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              @mouseover="showModal = 'icon'"
-              @mouseleave="showModal = null"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <div
-              v-if="showModal === 'icon'"
-              class="absolute top-0 right-0 mt-2 mr-2 w-64 bg-gray-800 bg-opacity-100 p-4 rounded-lg shadow-lg transition-opacity duration-300 opacity-90 z-20"
-              :style="{ transform: 'translate(50%, -10%)' }"
-            >
-              <h3 class="text-lg font-bold">Icon and Symbol Generator</h3>
-              <p>Detailed information about icon and symbol generation.</p>
-              <img src="" alt="Icon Details" class="mt-2" />
+              <h3 class="text-lg font-bold text-white">{{ item.title }}</h3>
+              <p class="text-white">{{ item.modalDescription }}</p>
             </div>
           </div>
         </div>
       </div>
-      <div v-else key="deep-generator" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div
+        v-else
+        key="deep-generator"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
+      >
         <div
+          v-for="item in deepGeneratorItems"
+          :key="item.name"
           class="p-8 rounded-lg hover:bg-gray-700 cursor-pointer bg-gray-800 flex flex-col h-full relative"
+          @click="navigateTo(item.route)"
         >
           <div class="flex items-center mb-4">
-            <img src="@/assets/icons/background.png" alt="Background Icon" class="w-12 h-12 mr-2" />
-            <h2 class="text-2xl font-bold text-slate-300">Single Character (Soon)</h2>
+            <img :src="item.icon" :alt="`${item.name} Icon`" class="w-12 h-12 mr-2" />
+            <h2 class="text-2xl font-bold text-slate-300">{{ item.title }}</h2>
           </div>
-          <p class="flex-grow">Coming soon: Create stunning backgrounds for your game.</p>
+          <p class="flex-grow text-white">{{ item.description }}</p>
           <div class="absolute top-0 right-0 p-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
+              class="h-5 w-5 text-white"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
-              @mouseover="showModal = 'single-character'"
+              @mouseover="showModal = item.name"
               @mouseleave="showModal = null"
             >
               <path
@@ -202,49 +101,12 @@
               />
             </svg>
             <div
-              v-if="showModal === 'single-character'"
+              v-if="showModal === item.name"
               class="absolute top-0 right-0 mt-2 mr-2 w-64 bg-gray-800 bg-opacity-100 p-4 rounded-lg shadow-lg transition-opacity duration-300 opacity-90 z-20"
               :style="{ transform: 'translate(50%, -10%)' }"
             >
-              <h3 class="text-lg font-bold">Single Character</h3>
-              <p>Detailed information about single character generation.</p>
-              <img src="" alt="Single Character Details" class="mt-2" />
-            </div>
-          </div>
-        </div>
-        <div
-          class="p-8 rounded-lg hover:bg-gray-700 cursor-pointer bg-gray-800 flex flex-col h-full relative"
-        >
-          <div class="flex items-center mb-4">
-            <img src="@/assets/icons/icon.png" alt="Icon and Symbol Icon" class="w-12 h-12 mr-2" />
-            <h2 class="text-2xl font-bold text-slate-300">Icon and Symbol Generator (Soon)</h2>
-          </div>
-          <p class="flex-grow">Coming soon: Generate icons and symbols for your game.</p>
-          <div class="absolute top-0 right-0 p-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              @mouseover="showModal = 'deep-icon'"
-              @mouseleave="showModal = null"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <div
-              v-if="showModal === 'deep-icon'"
-              class="absolute top-0 right-2 mt-2 mr-2 w-64 bg-gray-800 bg-opacity-100 p-4 rounded-lg shadow-lg transition-opacity duration-300 opacity-90 z-20"
-              :style="{ transform: 'translate(50%, -10%)' }"
-            >
-              <h3 class="text-lg font-bold">Icon and Symbol Generator</h3>
-              <p>Detailed information about icon and symbol generation.</p>
-              <img src="" alt="Icon Details" class="mt-2" />
+              <h3 class="text-lg font-bold text-white">{{ item.title }}</h3>
+              <p class="text-white">{{ item.modalDescription }}</p>
             </div>
           </div>
         </div>
@@ -254,20 +116,91 @@
 </template>
 
 <script>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
 export default {
   name: 'GeneratePage',
-  data() {
-    return {
-      selectedGenerator: 'generator',
-      showModal: null
+  setup() {
+    const router = useRouter()
+    const selectedGenerator = ref('generator')
+    const showModal = ref(null)
+
+    const generatorItems = [
+      {
+        name: 'character',
+        title: 'Character Generation',
+        description:
+          'Create custom 2D characters for your game using our AI-driven character generator.',
+        icon: new URL('@/assets/icons/character.png', import.meta.url).href,
+        route: '/character-generation',
+        modalDescription: 'Detailed information about character generation.'
+      },
+      {
+        name: 'item',
+        title: 'Item Generator',
+        description: 'Generate unique items for your game with ease.',
+        icon: new URL('@/assets/icons/item.png', import.meta.url).href,
+        route: '/item-generator',
+        modalDescription: 'Detailed information about item generation.'
+      },
+      {
+        name: 'background',
+        title: 'Background Generator (Soon)',
+        description: 'Coming soon: Create stunning backgrounds for your game.',
+        icon: new URL('@/assets/icons/background.png', import.meta.url).href,
+        route: '/background-generator',
+        modalDescription: 'Detailed information about background generation.'
+      },
+      {
+        name: 'icon',
+        title: 'Icon and Symbol Generator (Soon)',
+        description: 'Coming soon: Generate icons and symbols for your game.',
+        icon: new URL('@/assets/icons/icon.png', import.meta.url).href,
+        route: '/icon-generator',
+        modalDescription: 'Detailed information about icon and symbol generation.'
+      }
+    ]
+
+    const deepGeneratorItems = [
+      {
+        name: 'single-character',
+        title: 'Single Character (Soon)',
+        description: 'Coming soon: Create detailed single characters for your game.',
+        icon: new URL('@/assets/icons/background.png', import.meta.url).href,
+        route: '/single-character-generator',
+        modalDescription: 'Detailed information about single character generation.'
+      },
+      {
+        name: 'deep-icon',
+        title: 'Icon and Symbol Generator (Soon)',
+        description: 'Coming soon: Generate advanced icons and symbols for your game.',
+        icon: new URL('@/assets/icons/icon.png', import.meta.url).href,
+        route: '/deep-icon-generator',
+        modalDescription: 'Detailed information about advanced icon and symbol generation.'
+      }
+    ]
+
+    const selectGenerator = (generator) => {
+      selectedGenerator.value = generator
     }
-  },
-  methods: {
-    selectGenerator(generator) {
-      this.selectedGenerator = generator
-    },
-    buttonClass(generator) {
-      return this.selectedGenerator === generator ? 'text-white' : 'text-black'
+
+    const buttonClass = (generator) => {
+      return selectedGenerator.value === generator ? 'text-white' : 'text-black'
+    }
+
+    const navigateTo = (route) => {
+      router.push(route)
+    }
+
+    return {
+      selectedGenerator,
+      showModal,
+      generatorItems,
+      deepGeneratorItems,
+      selectGenerator,
+      buttonClass,
+      navigateTo
     }
   }
 }
@@ -276,6 +209,7 @@ export default {
 <style scoped>
 .container {
   max-width: 1200px;
+  width: 100%;
 }
 .fade-enter-active,
 .fade-leave-active {
