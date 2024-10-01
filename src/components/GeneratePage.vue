@@ -22,91 +22,114 @@
         ></div>
       </div>
     </div>
+
     <transition name="fade" mode="out-in">
-      <div
-        v-if="selectedGenerator === 'generator'"
-        key="generator"
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
-      >
-        <div
-          v-for="item in generatorItems"
-          :key="item.name"
-          class="p-6 rounded-lg hover:bg-gray-700 cursor-pointer bg-gray-800 flex flex-col h-full relative"
-          @click="navigateTo(item.route)"
-        >
-          <div class="flex items-center mb-4">
-            <img :src="item.icon" :alt="`${item.name} Icon`" class="w-12 h-12 mr-2" />
-            <h2 class="text-2xl font-bold text-slate-300">{{ item.title }}</h2>
+      <div :key="selectedGenerator" class="mt-8 mb-8 bg-gray-800 p-6 rounded-lg">
+        <div class="flex flex-col md:flex-row">
+          <div class="w-full md:w-2/3 pr-0 md:pr-6 mb-6 md:mb-0">
+            <h3 class="text-xl font-bold text-white mb-4">{{ selectedGeneratorInfo.title }}</h3>
+            <p class="text-white mb-4 max-w-prose">
+              {{ selectedGeneratorInfo.description }}
+            </p>
+            <ul class="text-white list-disc list-inside mb-4">
+              <li v-for="tip in selectedGeneratorInfo.tips" :key="tip" class="max-w-prose">
+                {{ tip }}
+              </li>
+            </ul>
           </div>
-          <p class="flex-grow text-white">{{ item.description }}</p>
-          <div class="absolute top-0 right-0 p-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5 text-white"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              @mouseover="showModal = item.name"
-              @mouseleave="showModal = null"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <div
-              v-if="showModal === item.name"
-              class="absolute top-0 right-0 mt-2 mr-2 w-64 bg-gray-800 bg-opacity-100 p-4 rounded-lg shadow-lg transition-opacity duration-300 opacity-90 z-20"
-              :style="{ transform: 'translate(50%, -10%)' }"
-            >
-              <h3 class="text-lg font-bold text-white">{{ item.title }}</h3>
-              <p class="text-white">{{ item.modalDescription }}</p>
+          <div class="w-full md:w-2/3 flex items-center justify-center">
+            <dotlottie-vue
+              src="https://lottie.host/62ec1613-0070-4e4f-b85a-4697dc4a442e/dn3S8eibeE.lottie"
+              autoplay
+              loop
+              class="w-full h-auto"
+            ></dotlottie-vue>
+          </div>
+        </div>
+      </div>
+    </transition>
+
+    <transition name="fade" mode="out-in">
+      <div v-if="selectedGenerator === 'generator'" key="generator">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          <div
+            v-for="item in generatorItems"
+            :key="item.name"
+            class="p-6 rounded-lg hover:bg-gray-700 cursor-pointer bg-gray-800 flex flex-col h-full relative"
+            @click="navigateTo(item.route)"
+          >
+            <div class="flex items-center mb-4">
+              <img :src="item.icon" :alt="`${item.name} Icon`" class="w-12 h-12 mr-2" />
+              <h2 class="text-2xl font-bold text-slate-300">{{ item.title }}</h2>
+            </div>
+            <p class="flex-grow text-white">{{ item.description }}</p>
+            <div class="absolute top-0 right-0 p-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                @mouseover="showModal = item.name"
+                @mouseleave="showModal = null"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <div
+                v-if="showModal === item.name"
+                class="absolute top-0 right-0 mt-2 mr-2 w-64 bg-gray-800 bg-opacity-100 p-4 rounded-lg shadow-lg transition-opacity duration-300 opacity-90 z-20"
+                :style="{ transform: 'translate(50%, -10%)' }"
+              >
+                <h3 class="text-lg font-bold text-white">{{ item.title }}</h3>
+                <p class="text-white">{{ item.modalDescription }}</p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div
-        v-else
-        key="deep-generator"
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
-      >
-        <div
-          v-for="item in deepGeneratorItems"
-          :key="item.name"
-          class="p-8 rounded-lg hover:bg-gray-700 cursor-pointer bg-gray-800 flex flex-col h-full relative"
-          @click="navigateTo(item.route)"
-        >
-          <div class="flex items-center mb-4">
-            <img :src="item.icon" :alt="`${item.name} Icon`" class="w-12 h-12 mr-2" />
-            <h2 class="text-2xl font-bold text-slate-300">{{ item.title }}</h2>
-          </div>
-          <p class="flex-grow text-white">{{ item.description }}</p>
-          <div class="absolute top-0 right-0 p-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5 text-white"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              @mouseover="showModal = item.name"
-              @mouseleave="showModal = null"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <div
-              v-if="showModal === item.name"
-              class="absolute top-0 right-0 mt-2 mr-2 w-64 bg-gray-800 bg-opacity-100 p-4 rounded-lg shadow-lg transition-opacity duration-300 opacity-90 z-20"
-              :style="{ transform: 'translate(50%, -10%)' }"
-            >
-              <h3 class="text-lg font-bold text-white">{{ item.title }}</h3>
-              <p class="text-white">{{ item.modalDescription }}</p>
+      <div v-else key="deep-generator">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          <div
+            v-for="item in deepGeneratorItems"
+            :key="item.name"
+            class="p-8 rounded-lg hover:bg-gray-700 cursor-pointer bg-gray-800 flex flex-col h-full relative"
+            @click="navigateTo(item.route)"
+          >
+            <div class="flex items-center mb-4">
+              <img :src="item.icon" :alt="`${item.name} Icon`" class="w-12 h-12 mr-2" />
+              <h2 class="text-2xl font-bold text-slate-300">{{ item.title }}</h2>
+            </div>
+            <p class="flex-grow text-white">{{ item.description }}</p>
+            <div class="absolute top-0 right-0 p-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                @mouseover="showModal = item.name"
+                @mouseleave="showModal = null"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <div
+                v-if="showModal === item.name"
+                class="absolute top-0 right-0 mt-2 mr-2 w-64 bg-gray-800 bg-opacity-100 p-4 rounded-lg shadow-lg transition-opacity duration-300 opacity-90 z-20"
+                :style="{ transform: 'translate(50%, -10%)' }"
+              >
+                <h3 class="text-lg font-bold text-white">{{ item.title }}</h3>
+                <p class="text-white">{{ item.modalDescription }}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -116,7 +139,7 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 
 export default {
@@ -181,6 +204,33 @@ export default {
       }
     ]
 
+    const generatorInfo = {
+      generator: {
+        title: "Let's create your game assets",
+        description:
+          'Our Generator tools offer a quick and easy way to create various game assets. Perfect for rapid prototyping or generating initial ideas, these tools use AI to produce characters, items, backgrounds, and icons based on your descriptions.',
+        tips: [
+          'Use simple and clear descriptions for best results',
+          'Experiment with different styles and themes',
+          "Try adding descriptive words like 'fantasy', 'sci-fi', or 'cartoon'",
+          'Use variations when you find a starting point you like'
+        ]
+      },
+      'deep-generator': {
+        title: 'Elevate your game with Deep Generators',
+        description:
+          'Our Deep Generator tools provide advanced capabilities for creating more detailed and consistent game assets. These tools can learn from multiple examples to generate assets that match a specific style or expand on existing designs.',
+        tips: [
+          'Provide multiple examples of the style you want to achieve',
+          'Use existing character poses to generate new variations',
+          'Create consistent item sets by training on related designs',
+          'Experiment with style transfer to reimagine existing assets'
+        ]
+      }
+    }
+
+    const selectedGeneratorInfo = computed(() => generatorInfo[selectedGenerator.value])
+
     const selectGenerator = (generator) => {
       selectedGenerator.value = generator
     }
@@ -200,7 +250,8 @@ export default {
       deepGeneratorItems,
       selectGenerator,
       buttonClass,
-      navigateTo
+      navigateTo,
+      selectedGeneratorInfo
     }
   }
 }
@@ -213,18 +264,16 @@ export default {
 }
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.2s;
+  transition: opacity 0.3s ease;
 }
-.fade-enter,
+.fade-enter-from,
 .fade-leave-to {
   opacity: 0;
 }
-button {
-  position: relative;
-  z-index: 10;
-  transition: color 0.3s;
-}
-.hover\:bg-gray-700:hover {
-  background-color: #242e3d;
+
+@media (max-width: 768px) {
+  .max-w-prose {
+    max-width: 100%;
+  }
 }
 </style>

@@ -19,28 +19,15 @@
               <a class="btn-info btn" href="/generate">Get started</a>
             </div>
           </div>
-          <div class="relative">
-            <div class="carousel w-[600px] h-[400px]">
-              <div
-                v-for="n in 6"
-                :key="n"
-                :id="`slide${n}`"
-                class="carousel-item relative w-full h-full"
-                :class="{ hidden: currentSlide !== n }"
-              >
-                <img
-                  :src="getBannerImage(n)"
-                  class="w-full h-full object-contain"
-                  :alt="`banner ${n}`"
-                />
-              </div>
-            </div>
-            <div
-              class="absolute flex justify-between transform -translate-y-1/2 left-5 right-[-130px] top-2/3"
-            >
-              <button @click="prevSlide" class="btn btn-circle">❮</button>
-              <button @click="nextSlide" class="btn btn-circle">❯</button>
-            </div>
+          <div class="relative flex items-center justify-center">
+            <dotlottie-vue
+              src="https://lottie.host/eaf514a6-5171-496c-8ff3-a62d0fdc612c/zlloRszfSN.lottie"
+              background="transparent"
+              speed="1"
+              style="width: 300px; height: 300px"
+              loop
+              autoplay
+            ></dotlottie-vue>
           </div>
 
           <div
