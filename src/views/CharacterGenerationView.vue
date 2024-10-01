@@ -14,7 +14,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import TwoColumnBoxes from '@/components/TwoColumnBoxes.vue'
-import swordsmanIcon from '@/assets/icons/swordsman.png'
+import swordsmanIcon from '@/assets/icons/santa.png'
 import scribbleIcon from '@/assets/icons/scribble.png'
 import swordsmanIcon2 from '@/assets/icons/swordsman2.png' // Bu resmi eklemeyi unutmayın
 
