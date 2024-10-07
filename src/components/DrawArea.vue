@@ -21,14 +21,14 @@
         </div>
       </div>
 
-      <!-- Çizim alanı -->
+      <!-- Çizim alanı veya resim yükleme alanı -->
       <div v-show="currentStep === 'drawing'" class="flex">
-        <div class="flex-grow">
+        <div v-if="mode === 'draw' || isEditing" class="flex-grow">
           <div class="flex space-x-2 mb-4">
             <button
-              v-for="tool in ['brush', 'eraser', 'fill-drip', 'trash-alt']"
+              v-for="tool in ['brush', 'eraser', 'fill-drip', 'trash-alt', 'undo']"
               :key="tool"
-              @click="setTool(tool)"
+              @click="handleToolClick(tool)"
               class="tool-button"
               :class="{
                 active: currentTool === tool,
@@ -38,19 +38,76 @@
             >
               <font-awesome-icon class="text-white text-xl" :icon="['fas', tool]" />
             </button>
+            <button
+              v-if="isEditing"
+              @click="stopEditing"
+              class="tool-button bg-green-500 hover:bg-green-600"
+              title="Düzenlemeyi Tamamla"
+            >
+              <font-awesome-icon class="text-white text-xl" :icon="['fas', 'check']" />
+            </button>
           </div>
           <canvas
             ref="canvas"
             width="800"
             height="600"
-            :class="{ 'cursor-none': isDrawing }"
-            @mousedown="handleMouseDown"
-            @mousemove="handleMouseMove"
+            @mousedown="startDrawing"
+            @mousemove="draw"
             @mouseup="stopDrawing"
             @mouseleave="stopDrawing"
           ></canvas>
         </div>
-        <div class="w-40 ml-4 flex flex-col justify-center items-center space-y-6">
+        <div v-else-if="mode === 'upload'" class="flex-grow relative">
+          <!-- Resim yükleme alanı -->
+          <div
+            class="flex flex-col items-center justify-center h-[600px] border-2 border-dashed border-white rounded-lg p-4"
+            @dragover.prevent
+            @drop.prevent="handleDrop"
+          >
+            <input
+              type="file"
+              @change="handleImageUpload"
+              accept="image/*"
+              class="hidden"
+              ref="fileInput"
+            />
+            <button
+              v-if="!uploadedImage"
+              @click="$refs.fileInput.click()"
+              class="bg-blue-500 text-white px-4 py-2 rounded mb-4"
+            >
+              Resim Yükle
+            </button>
+            <p v-if="!uploadedImage" class="text-white mb-4">veya buraya sürükleyip bırakın</p>
+            <img
+              v-if="uploadedImage"
+              :src="uploadedImage"
+              alt="Yüklenen Resim"
+              class="max-w-full max-h-[550px] object-contain"
+            />
+          </div>
+          <!-- Resim silme, düzenleme ve geri alma ikonları -->
+          <div v-if="uploadedImage" class="absolute top-2 right-2 flex space-x-2">
+            <button
+              @click="startEditing"
+              class="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 transition-colors duration-300"
+              title="Resmi Düzenle"
+            >
+              <font-awesome-icon :icon="['fas', 'edit']" />
+            </button>
+            <button
+              @click="deleteImage"
+              class="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors duration-300"
+              title="Resmi Sil"
+            >
+              <font-awesome-icon :icon="['fas', 'trash-alt']" />
+            </button>
+          </div>
+        </div>
+        <div
+          v-if="mode === 'draw' || isEditing"
+          class="w-40 ml-4 flex flex-col justify-center items-center space-y-6"
+        >
           <div class="flex flex-col items-center space-y-2">
             <span class="text-white">Size:</span>
             <input type="range" v-model="lineWidth" min="1" max="20" class="w-full" />
@@ -65,7 +122,7 @@
             ></button>
           </div>
           <input type="color" v-model="currentColor" class="w-8 h-8" />
-          <button @click="downloadCanvas" class="download-button" title="İndir">
+          <button @click="downloadCanvas" class="download-button" title="Download">
             <font-awesome-icon class="text-white mr-2" :icon="['fas', 'download']" /> Download
           </button>
         </div>
@@ -74,7 +131,7 @@
       <!-- Karakter oluşturma alanı -->
       <div v-show="currentStep === 'character'">
         <div class="mb-4">
-          <label class="block text-white mb-2" for="prompt">Karakter Açıklaması:</label>
+          <label class="block text-white mb-2" for="prompt">Character Description:</label>
           <textarea
             id="prompt"
             v-model="characterPrompt"
@@ -83,19 +140,35 @@
           ></textarea>
         </div>
         <div class="mb-4">
-          <label class="block text-white mb-2" for="style">Stil:</label>
+          <label class="block text-white mb-2" for="style">Style:</label>
           <select id="style" v-model="characterStyle" class="w-full p-2 rounded">
-            <option value="pixel">Piksel Sanatı</option>
-            <option value="cartoon">Çizgi Film</option>
-            <option value="realistic">Gerçekçi</option>
+            <option value="pixel">Pixel Art</option>
+            <option value="cartoon">Cartoon</option>
+            <option value="realistic">Realistic</option>
           </select>
+        </div>
+      </div>
+
+      <!-- Önizleme alanı -->
+      <div v-show="currentStep === 'preview'" class="text-white">
+        <h2 class="text-xl font-bold mb-4">Önizleme</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="border border-gray-600 p-4 rounded">
+            <h3 class="text-lg font-semibold mb-2">Çizim</h3>
+            <img :src="canvasImage || uploadedImage" alt="Çizim" class="w-full h-auto" />
+          </div>
+          <div class="border border-gray-600 p-4 rounded">
+            <h3 class="text-lg font-semibold mb-2">Karakter Detayları</h3>
+            <p><strong>Açıklama:</strong> {{ characterPrompt }}</p>
+            <p><strong>Stil:</strong> {{ characterStyle }}</p>
+          </div>
         </div>
       </div>
 
       <!-- Navigasyon okları -->
       <div class="flex justify-between mt-4">
         <button
-          v-if="currentStep !== steps[0].id"
+          v-if="currentStep !== steps[0].id && !isEditing"
           @click="previousStep"
           class="bg-blue-500 text-white px-4 py-2 rounded"
         >
@@ -103,14 +176,11 @@
         </button>
         <div v-else></div>
         <button
-          v-if="currentStep !== steps[steps.length - 1].id"
+          v-if="currentStep !== steps[steps.length - 1].id && !isEditing"
           @click="nextStep"
           class="bg-blue-500 text-white px-4 py-2 rounded"
         >
           <font-awesome-icon :icon="['fas', 'arrow-right']" />
-        </button>
-        <button v-else @click="generateCharacter" class="bg-green-500 text-white px-4 py-2 rounded">
-          Karakter Oluştur
         </button>
       </div>
     </div>
@@ -118,11 +188,18 @@
 </template>
 
 <script>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, nextTick } from 'vue'
 
 export default {
   name: 'DrawArea',
-  setup() {
+  props: {
+    mode: {
+      type: String,
+      default: 'draw',
+      validator: (value) => ['draw', 'upload'].includes(value)
+    }
+  },
+  setup(props) {
     const canvas = ref(null)
     const ctx = ref(null)
     const isDrawing = ref(false)
@@ -140,37 +217,44 @@ export default {
       '#000000'
     ]
     const steps = ref([
-      { id: 'drawing', name: 'Çizim' },
-      { id: 'character', name: 'Karakter Özellikleri' }
+      { id: 'drawing', name: 'Drawing' },
+      { id: 'character', name: 'Character Details' },
+      { id: 'preview', name: 'Preview' }
     ])
     const currentStep = ref(steps.value[0].id)
     const characterPrompt = ref('')
     const characterStyle = ref('pixel')
+    const canvasImage = ref('')
+    const uploadedImage = ref(null)
+    const isEditing = ref(false)
+    const originalImage = ref(null)
+    const history = ref([])
+    const baseImage = ref(null)
 
     const cursorCanvas = document.createElement('canvas')
     const cursorCtx = cursorCanvas.getContext('2d')
 
     onMounted(() => {
+      const savedImage = localStorage.getItem('savedDrawing')
+      if (savedImage) {
+        uploadedImage.value = savedImage
+        originalImage.value = savedImage
+      }
+
+      if (props.mode === 'draw') {
+        initializeCanvas()
+      }
+    })
+
+    const initializeCanvas = () => {
       ctx.value = canvas.value.getContext('2d')
       ctx.value.lineCap = 'round'
       ctx.value.lineJoin = 'round'
-
-      // localStorage'dan kaydedilmiş resmi yükle
-      const savedImage = localStorage.getItem('savedDrawing')
-      if (savedImage) {
-        const img = new Image()
-        img.onload = () => {
-          ctx.value.drawImage(img, 0, 0)
-        }
-        img.src = savedImage
-      } else {
-        // Eğer kaydedilmiş resim yoksa, siyah arka planı çiz
-        ctx.value.fillStyle = '#000000'
-        ctx.value.fillRect(0, 0, canvas.value.width, canvas.value.height)
-      }
-
-      canvas.value.addEventListener('mousemove', updateCursor)
-    })
+      ctx.value.fillStyle = '#000000'
+      ctx.value.fillRect(0, 0, canvas.value.width, canvas.value.height)
+      baseImage.value = ctx.value.getImageData(0, 0, canvas.value.width, canvas.value.height)
+      saveToHistory()
+    }
 
     const updateCursor = (event) => {
       const rect = canvas.value.getBoundingClientRect()
@@ -215,21 +299,6 @@ export default {
       }
     }
 
-    const handleMouseDown = (event) => {
-      if (currentTool.value === 'fill') {
-        fillArea(event)
-      } else {
-        startDrawing(event)
-      }
-    }
-
-    const handleMouseMove = (event) => {
-      updateCursor(event)
-      if (isDrawing.value) {
-        draw(event)
-      }
-    }
-
     const startDrawing = (event) => {
       isDrawing.value = true
       draw(event)
@@ -237,48 +306,55 @@ export default {
 
     const draw = (event) => {
       if (!isDrawing.value) return
-
       const rect = canvas.value.getBoundingClientRect()
       const x = event.clientX - rect.left
       const y = event.clientY - rect.top
 
       ctx.value.strokeStyle = currentTool.value === 'eraser' ? '#000000' : currentColor.value
       ctx.value.lineWidth = lineWidth.value
+
       ctx.value.lineTo(x, y)
       ctx.value.stroke()
       ctx.value.beginPath()
       ctx.value.moveTo(x, y)
-
-      // Her çizimden sonra resmi kaydet
-      saveDrawing()
-    }
-
-    const saveDrawing = () => {
-      const imageData = canvas.value.toDataURL()
-      localStorage.setItem('savedDrawing', imageData)
     }
 
     const stopDrawing = () => {
-      isDrawing.value = false
-      ctx.value.beginPath()
+      if (isDrawing.value) {
+        isDrawing.value = false
+        ctx.value.beginPath()
+        saveToHistory()
+      }
+    }
+
+    const saveToHistory = () => {
+      const imageData = ctx.value.getImageData(0, 0, canvas.value.width, canvas.value.height)
+      history.value.push(imageData)
+      if (history.value.length > 10) {
+        history.value.shift()
+      }
+    }
+
+    const undo = () => {
+      if (history.value.length > 1) {
+        history.value.pop()
+        ctx.value.putImageData(history.value[history.value.length - 1], 0, 0)
+      } else if (history.value.length === 1) {
+        ctx.value.putImageData(baseImage.value, 0, 0)
+      }
+    }
+
+    const clearCanvas = () => {
+      ctx.value.putImageData(baseImage.value, 0, 0)
+      history.value = [baseImage.value]
     }
 
     const setTool = (tool) => {
-      if (tool === 'trash-alt') {
-        clearCanvas()
-      } else {
-        currentTool.value = tool
-      }
+      currentTool.value = tool
     }
 
     const setColor = (color) => {
       currentColor.value = color
-    }
-
-    const clearCanvas = () => {
-      ctx.value.fillStyle = '#000000'
-      ctx.value.fillRect(0, 0, canvas.value.width, canvas.value.height)
-      localStorage.removeItem('savedDrawing')
     }
 
     const downloadCanvas = () => {
@@ -372,17 +448,132 @@ export default {
 
     const getToolTitle = (tool) => {
       const titles = {
-        brush: 'Fırça',
-        eraser: 'Silgi',
-        'fill-drip': 'Doldur',
-        'trash-alt': 'Temizle'
+        brush: 'Brush',
+        eraser: 'Eraser',
+        'fill-drip': 'Fill',
+        'trash-alt': 'Clear',
+        undo: 'Undo'
       }
       return titles[tool] || tool
     }
 
+    const updateCanvasImage = () => {
+      if (canvas.value && (props.mode === 'draw' || isEditing.value)) {
+        const updatedImage = canvas.value.toDataURL()
+        canvasImage.value = updatedImage
+        if (isEditing.value) {
+          uploadedImage.value = updatedImage
+          localStorage.setItem('savedDrawing', updatedImage)
+        }
+      } else if (uploadedImage.value) {
+        canvasImage.value = uploadedImage.value
+      }
+    }
+
+    const handleImageUpload = (event) => {
+      const file = event.target.files[0]
+      if (file) {
+        loadImage(file)
+      }
+    }
+
+    const handleDrop = (event) => {
+      const file = event.dataTransfer.files[0]
+      if (file && file.type.startsWith('image/')) {
+        loadImage(file)
+      }
+    }
+
+    const loadImage = (file) => {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        uploadedImage.value = e.target.result
+        originalImage.value = e.target.result
+        localStorage.setItem('savedDrawing', uploadedImage.value)
+      }
+      reader.readAsDataURL(file)
+    }
+
+    const deleteImage = () => {
+      uploadedImage.value = null
+      originalImage.value = null
+      isEditing.value = false
+      localStorage.removeItem('savedDrawing')
+    }
+
+    const startEditing = () => {
+      isEditing.value = true
+      nextTick(() => {
+        initializeCanvas()
+        const img = new Image()
+        img.onload = () => {
+          ctx.value.clearRect(0, 0, canvas.value.width, canvas.value.height)
+          ctx.value.drawImage(img, 0, 0, canvas.value.width, canvas.value.height)
+          baseImage.value = ctx.value.getImageData(0, 0, canvas.value.width, canvas.value.height)
+          saveToHistory()
+        }
+        img.src = uploadedImage.value
+      })
+    }
+
+    const stopEditing = () => {
+      isEditing.value = false
+      updateCanvasImage()
+    }
+
+    const resetToOriginal = () => {
+      uploadedImage.value = originalImage.value
+    }
+
+    const handleToolClick = (tool) => {
+      if (tool === 'undo') {
+        undo()
+      } else if (tool === 'trash-alt') {
+        clearCanvas()
+      } else {
+        currentTool.value = tool
+      }
+    }
+
+    const resetDrawing = () => {
+      if (props.mode === 'upload') {
+        uploadedImage.value = null
+        canvasImage.value = ''
+        localStorage.removeItem('savedDrawing')
+      }
+    }
+
+    watch(
+      () => isEditing.value,
+      (newValue) => {
+        if (newValue) {
+          nextTick(() => {
+            initializeCanvas()
+          })
+        }
+      }
+    )
+
     watch([currentColor, lineWidth, currentTool], () => {
       updateCursor({ clientX: 0, clientY: 0 })
     })
+
+    watch(currentStep, (newStep) => {
+      if (newStep === 'preview') {
+        updateCanvasImage()
+      }
+    })
+
+    watch(
+      () => props.mode,
+      (newMode) => {
+        if (newMode === 'draw') {
+          initializeCanvas()
+        } else if (newMode === 'upload') {
+          resetDrawing()
+        }
+      }
+    )
 
     return {
       canvas,
@@ -398,8 +589,8 @@ export default {
       setStep,
       nextStep,
       previousStep,
-      handleMouseDown,
-      handleMouseMove,
+      startDrawing,
+      draw,
       stopDrawing,
       setTool,
       setColor,
@@ -407,7 +598,21 @@ export default {
       downloadCanvas,
       generateCharacter,
       addStep,
-      getToolTitle
+      getToolTitle,
+      canvasImage,
+      uploadedImage,
+      handleImageUpload,
+      handleDrop,
+      deleteImage,
+      isEditing,
+      startEditing,
+      stopEditing,
+      resetToOriginal,
+      initializeCanvas,
+      undo,
+      handleToolClick,
+      updateCanvasImage,
+      resetDrawing
     }
   }
 }
@@ -478,5 +683,12 @@ export default {
 .tool-button:hover::after {
   opacity: 1;
   visibility: visible;
+}
+
+.tool-button.bg-green-500 {
+  background-color: #10b981;
+}
+.tool-button.bg-green-500:hover {
+  background-color: #059669;
 }
 </style>

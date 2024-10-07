@@ -1,8 +1,8 @@
 <template>
-  <div class="character-draw-page">
+  <div class="character-upload-page">
     <h1 class="text-4xl font-bold text-center my-8">Karakter Çizim Sayfası</h1>
     <div class="flex justify-center">
-      <DrawArea mode="draw" class="w-4/5" />
+      <DrawArea mode="upload" class="w-4/5" />
     </div>
   </div>
 </template>
@@ -11,7 +11,7 @@
 import DrawArea from '@/components/DrawArea.vue'
 
 export default {
-  name: 'CharacterDrawPage',
+  name: 'CharacterUploadPage',
   components: {
     DrawArea
   }

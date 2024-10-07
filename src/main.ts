@@ -5,10 +5,13 @@ import {
   faArrowLeft,
   faArrowRight,
   faBrush,
+  faCheck,
   faDownload,
+  faEdit,
   faEraser,
   faFillDrip,
-  faTrashAlt
+  faTrashAlt,
+  faUndo
 } from '@fortawesome/free-solid-svg-icons'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
@@ -22,6 +25,9 @@ library.add(faFillDrip)
 library.add(faArrowLeft)
 library.add(faArrowRight)
 library.add(faTrashAlt)
+library.add(faUndo)
+library.add(faEdit)
+library.add(faCheck)
 
 import App from './App.vue'
 import router from './router'

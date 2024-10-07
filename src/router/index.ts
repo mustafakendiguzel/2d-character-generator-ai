@@ -68,6 +68,11 @@ const router = createRouter({
       component: () => import('@/views/DrawCharacter.vue')
     },
     {
+      path: '/generate/character-generation/upload-character',
+      name: 'upload-character',
+      component: () => import('@/views/UploadCharacter.vue')
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('@/components/NotFound.vue')
