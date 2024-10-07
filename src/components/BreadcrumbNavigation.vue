@@ -37,6 +37,7 @@ export default {
 
     const breadcrumbs = computed(() => {
       const pathArray = route.path.split('/').filter(Boolean)
+
       return [
         { name: 'Home', path: '/' },
         ...pathArray.map((segment, index) => ({
