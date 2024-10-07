@@ -29,7 +29,7 @@ export const useGeneratorStore = defineStore('generator', {
         icon: new URL('@/assets/icons/background.png', import.meta.url).href,
         route: 'generate/background-generator',
         modalDescription: 'Detailed information about background generation.',
-        soon: false
+        soon: true
       },
       {
         name: 'icon',

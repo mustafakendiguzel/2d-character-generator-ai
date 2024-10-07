@@ -63,6 +63,11 @@ const router = createRouter({
       component: () => import('@/views/DeepIconGeneratorView.vue')
     },
     {
+      path: '/generate/character-generation/draw-character',
+      name: 'draw-character',
+      component: () => import('@/views/DrawCharacter.vue')
+    },
+    {
       path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: () => import('@/components/NotFound.vue')

@@ -46,7 +46,7 @@
                 @click.stop="handleSubOptionClick(box.subOptions[0])"
                 class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
               >
-                Seç
+                Select
               </button>
             </div>
             <div class="h-1/2 p-4 flex flex-col justify-center items-center">
@@ -56,7 +56,7 @@
                 @click.stop="handleSubOptionClick(box.subOptions[1])"
                 class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
               >
-                Seç
+                Select
               </button>
             </div>
             <button

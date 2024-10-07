@@ -58,8 +58,6 @@ export default {
       }
     ])
 
-    const animatedBoxImage = ref(swordsmanIcon2)
-
     const handleBoxClick = (box) => {
       if (box.isAdvanced) {
         console.log('Advanced option clicked')
@@ -76,8 +74,7 @@ export default {
     return {
       characterBoxes,
       handleBoxClick,
-      handleSubOptionClick,
-      animatedBoxImage
+      handleSubOptionClick
     }
   }
 }
