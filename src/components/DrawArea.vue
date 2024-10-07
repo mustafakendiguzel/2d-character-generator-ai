@@ -235,14 +235,16 @@ export default {
     const cursorCtx = cursorCanvas.getContext('2d')
 
     onMounted(() => {
-      const savedImage = localStorage.getItem('savedDrawing')
-      if (savedImage) {
-        uploadedImage.value = savedImage
-        originalImage.value = savedImage
-      }
-
       if (props.mode === 'draw') {
-        initializeCanvas()
+        nextTick(() => {
+          initializeCanvas()
+        })
+      } else if (props.mode === 'upload') {
+        const savedImage = localStorage.getItem('savedUploadedImage')
+        if (savedImage) {
+          uploadedImage.value = savedImage
+          originalImage.value = savedImage
+        }
       }
     })
 
@@ -252,8 +254,32 @@ export default {
       ctx.value.lineJoin = 'round'
       ctx.value.fillStyle = '#000000'
       ctx.value.fillRect(0, 0, canvas.value.width, canvas.value.height)
-      baseImage.value = ctx.value.getImageData(0, 0, canvas.value.width, canvas.value.height)
-      saveToHistory()
+
+      if (isEditing.value) {
+        // Eğer düzenleme modundaysak, yüklenen resmi kullan
+        const img = new Image()
+        img.onload = () => {
+          ctx.value.drawImage(img, 0, 0, canvas.value.width, canvas.value.height)
+          baseImage.value = ctx.value.getImageData(0, 0, canvas.value.width, canvas.value.height)
+          saveToHistory()
+        }
+        img.src = uploadedImage.value
+      } else if (props.mode === 'draw') {
+        // Çizim modundaysak, kaydedilmiş çizimi yükle
+        const savedDrawing = localStorage.getItem('savedDrawing')
+        if (savedDrawing) {
+          const img = new Image()
+          img.onload = () => {
+            ctx.value.drawImage(img, 0, 0)
+            baseImage.value = ctx.value.getImageData(0, 0, canvas.value.width, canvas.value.height)
+            saveToHistory()
+          }
+          img.src = savedDrawing
+        } else {
+          baseImage.value = ctx.value.getImageData(0, 0, canvas.value.width, canvas.value.height)
+          saveToHistory()
+        }
+      }
     }
 
     const updateCursor = (event) => {
@@ -324,6 +350,7 @@ export default {
         isDrawing.value = false
         ctx.value.beginPath()
         saveToHistory()
+        updateCanvasImage()
       }
     }
 
@@ -458,15 +485,14 @@ export default {
     }
 
     const updateCanvasImage = () => {
-      if (canvas.value && (props.mode === 'draw' || isEditing.value)) {
+      if (canvas.value && props.mode === 'draw') {
         const updatedImage = canvas.value.toDataURL()
         canvasImage.value = updatedImage
-        if (isEditing.value) {
-          uploadedImage.value = updatedImage
-          localStorage.setItem('savedDrawing', updatedImage)
-        }
-      } else if (uploadedImage.value) {
-        canvasImage.value = uploadedImage.value
+        localStorage.setItem('savedDrawing', updatedImage)
+      } else if (isEditing.value) {
+        const updatedImage = canvas.value.toDataURL()
+        uploadedImage.value = updatedImage
+        localStorage.setItem('savedUploadedImage', updatedImage)
       }
     }
 
@@ -489,7 +515,7 @@ export default {
       reader.onload = (e) => {
         uploadedImage.value = e.target.result
         originalImage.value = e.target.result
-        localStorage.setItem('savedDrawing', uploadedImage.value)
+        localStorage.setItem('savedUploadedImage', uploadedImage.value)
       }
       reader.readAsDataURL(file)
     }
@@ -498,7 +524,7 @@ export default {
       uploadedImage.value = null
       originalImage.value = null
       isEditing.value = false
-      localStorage.removeItem('savedDrawing')
+      localStorage.removeItem('savedUploadedImage')
     }
 
     const startEditing = () => {
@@ -537,9 +563,11 @@ export default {
 
     const resetDrawing = () => {
       if (props.mode === 'upload') {
-        uploadedImage.value = null
+        uploadedImage.value = localStorage.getItem('savedUploadedImage') || null
         canvasImage.value = ''
-        localStorage.removeItem('savedDrawing')
+      } else if (props.mode === 'draw') {
+        canvasImage.value = localStorage.getItem('savedDrawing') || ''
+        uploadedImage.value = null
       }
     }
 
@@ -567,10 +595,11 @@ export default {
     watch(
       () => props.mode,
       (newMode) => {
+        resetDrawing()
         if (newMode === 'draw') {
-          initializeCanvas()
-        } else if (newMode === 'upload') {
-          resetDrawing()
+          nextTick(() => {
+            initializeCanvas()
+          })
         }
       }
     )
