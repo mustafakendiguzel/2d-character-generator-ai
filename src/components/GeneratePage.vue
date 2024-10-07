@@ -55,8 +55,11 @@
           <div
             v-for="item in generatorItems"
             :key="item.name"
-            class="p-6 rounded-lg hover:bg-gray-700 cursor-pointer bg-gray-800 flex flex-col h-full relative"
-            @click="navigateTo(item.route)"
+            :class="[
+              'p-6 rounded-lg bg-gray-800 flex flex-col h-full relative',
+              item.soon ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-700 cursor-pointer'
+            ]"
+            @click="navigateTo(item.route, item.soon)"
           >
             <div class="flex items-center mb-4">
               <img :src="item.icon" :alt="`${item.name} Icon`" class="w-12 h-12 mr-2" />
@@ -88,6 +91,12 @@
                 <h3 class="text-lg font-bold text-white">{{ item.title }}</h3>
                 <p class="text-white">{{ item.modalDescription }}</p>
               </div>
+            </div>
+            <div
+              v-if="item.soon"
+              class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg"
+            >
+              <span class="text-white font-bold text-xl bg-red-500 px-3 py-1 rounded">Soon</span>
             </div>
           </div>
         </div>
@@ -97,8 +106,11 @@
           <div
             v-for="item in deepGeneratorItems"
             :key="item.name"
-            class="p-8 rounded-lg hover:bg-gray-700 cursor-pointer bg-gray-800 flex flex-col h-full relative"
-            @click="navigateTo(item.route)"
+            :class="[
+              'p-8 rounded-lg bg-gray-800 flex flex-col h-full relative',
+              item.soon ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-700 cursor-pointer'
+            ]"
+            @click="navigateTo(item.route, item.soon)"
           >
             <div class="flex items-center mb-4">
               <img :src="item.icon" :alt="`${item.name} Icon`" class="w-12 h-12 mr-2" />
@@ -131,14 +143,20 @@
                 <p class="text-white">{{ item.modalDescription }}</p>
               </div>
             </div>
+            <div
+              v-if="item.soon"
+              class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-lg"
+            >
+              <span class="text-white font-bold text-xl bg-red-500 px-3 py-1 rounded">Soon</span>
+            </div>
           </div>
         </div>
       </div>
     </transition>
   </div>
 </template>
-
 <script>
+import { useGeneratorStore } from '@/stores/cards'
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -148,61 +166,70 @@ export default {
     const router = useRouter()
     const selectedGenerator = ref('generator')
     const showModal = ref(null)
+    const generatorStore = useGeneratorStore()
+    const generatorItems = computed(() => generatorStore.generatorItems)
+    const deepGeneratorItems = computed(() => generatorStore.deepGeneratorItems)
 
-    const generatorItems = [
-      {
-        name: 'character',
-        title: 'Character Generation',
-        description:
-          'Create custom 2D characters for your game using our AI-driven character generator.',
-        icon: new URL('@/assets/icons/character.png', import.meta.url).href,
-        route: 'generate/character-generation',
-        modalDescription: 'Detailed information about character generation.'
-      },
-      {
-        name: 'item',
-        title: 'Item Generator',
-        description: 'Generate unique items for your game with ease.',
-        icon: new URL('@/assets/icons/item.png', import.meta.url).href,
-        route: 'generate/item-generator',
-        modalDescription: 'Detailed information about item generation.'
-      },
-      {
-        name: 'background',
-        title: 'Background Generator (Soon)',
-        description: 'Coming soon: Create stunning backgrounds for your game.',
-        icon: new URL('@/assets/icons/background.png', import.meta.url).href,
-        route: 'generate/background-generator',
-        modalDescription: 'Detailed information about background generation.'
-      },
-      {
-        name: 'icon',
-        title: 'Icon and Symbol Generator (Soon)',
-        description: 'Coming soon: Generate icons and symbols for your game.',
-        icon: new URL('@/assets/icons/icon.png', import.meta.url).href,
-        route: 'generate/icon-generator',
-        modalDescription: 'Detailed information about icon and symbol generation.'
-      }
-    ]
+    // const generatorItems = [
+    //   {
+    //     name: 'character',
+    //     title: 'Character Generation',
+    //     description:
+    //       'Create custom 2D characters for your game using our AI-driven character generator.',
+    //     icon: new URL('@/assets/icons/character.png', import.meta.url).href,
+    //     route: 'generate/character-generation',
+    //     modalDescription: 'Detailed information about character generation.',
+    //     soon: false
+    //   },
+    //   {
+    //     name: 'item',
+    //     title: 'Item Generator',
+    //     description: 'Generate unique items for your game with ease.',
+    //     icon: new URL('@/assets/icons/item.png', import.meta.url).href,
+    //     route: 'generate/item-generator',
+    //     modalDescription: 'Detailed information about item generation.',
+    //     soon: false
+    //   },
+    //   {
+    //     name: 'background',
+    //     title: 'Background Generator',
+    //     description: 'Create stunning backgrounds for your game.',
+    //     icon: new URL('@/assets/icons/background.png', import.meta.url).href,
+    //     route: 'generate/background-generator',
+    //     modalDescription: 'Detailed information about background generation.',
+    //     soon: true
+    //   },
+    //   {
+    //     name: 'icon',
+    //     title: 'Icon and Symbol Generator',
+    //     description: 'Generate icons and symbols for your game.',
+    //     icon: new URL('@/assets/icons/icon.png', import.meta.url).href,
+    //     route: 'generate/icon-generator',
+    //     modalDescription: 'Detailed information about icon and symbol generation.',
+    //     soon: true
+    //   }
+    // ]
 
-    const deepGeneratorItems = [
-      {
-        name: 'single-character',
-        title: 'Single Character (Soon)',
-        description: 'Coming soon: Create detailed single characters for your game.',
-        icon: new URL('@/assets/icons/background.png', import.meta.url).href,
-        route: 'generate/single-character-generator',
-        modalDescription: 'Detailed information about single character generation.'
-      },
-      {
-        name: 'deep-icon',
-        title: 'Icon and Symbol Generator (Soon)',
-        description: 'Coming soon: Generate advanced icons and symbols for your game.',
-        icon: new URL('@/assets/icons/icon.png', import.meta.url).href,
-        route: 'generate/deep-icon-generator',
-        modalDescription: 'Detailed information about advanced icon and symbol generation.'
-      }
-    ]
+    // const deepGeneratorItems = [
+    //   {
+    //     name: 'single-character',
+    //     title: 'Single Character',
+    //     description: 'Create detailed single characters for your game.',
+    //     icon: new URL('@/assets/icons/background.png', import.meta.url).href,
+    //     route: 'generate/single-character-generator',
+    //     modalDescription: 'Detailed information about single character generation.',
+    //     soon: true
+    //   },
+    //   {
+    //     name: 'deep-icon',
+    //     title: 'Icon and Symbol Generator',
+    //     description: 'Generate advanced icons and symbols for your game.',
+    //     icon: new URL('@/assets/icons/icon.png', import.meta.url).href,
+    //     route: 'generate/deep-icon-generator',
+    //     modalDescription: 'Detailed information about advanced icon and symbol generation.',
+    //     soon: true
+    //   }
+    // ]
 
     const generatorInfo = {
       generator: {
@@ -239,8 +266,10 @@ export default {
       return selectedGenerator.value === generator ? 'text-white' : 'text-black'
     }
 
-    const navigateTo = (route) => {
-      router.push(route)
+    const navigateTo = (route, soon) => {
+      if (!soon) {
+        router.push(route)
+      }
     }
 
     return {

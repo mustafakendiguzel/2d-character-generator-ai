@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LandingPage from '@/components/LandingPage.vue'
 import GeneratePage from '@/components/GeneratePage.vue'
+import { useGeneratorStore } from '@/stores/cards'
+import { useCounterStore } from '@/stores/counter'
 
 // @ts-ignore
 const router = createRouter({
@@ -59,8 +61,28 @@ const router = createRouter({
       path: '/generate/deep-icon-generator',
       name: 'deep-icon-generator',
       component: () => import('@/views/DeepIconGeneratorView.vue')
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      component: () => import('@/components/NotFound.vue')
     }
   ]
+})
+
+router.beforeEach((to, from, next) => {
+  const generatorStore = useGeneratorStore()
+  const generatorItem = generatorStore.getGeneratorItemByRoute(to.path.slice(1))
+  if (generatorItem && generatorItem.soon) {
+    next({ name: 'not-found' })
+    return
+  }
+
+  if (to.matched.length === 0) {
+    next({ name: 'not-found' })
+    return
+  }
+  next()
 })
 
 export default router
