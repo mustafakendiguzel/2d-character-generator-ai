@@ -26,7 +26,7 @@
         <div v-if="mode === 'draw' || isEditing" class="flex-grow">
           <div class="flex space-x-2 mb-4">
             <button
-              v-for="tool in ['brush', 'eraser', 'fill-drip', 'trash-alt', 'undo']"
+              v-for="tool in ['brush', 'eraser', 'fill-drip', 'trash-alt', 'undo', 'download']"
               :key="tool"
               @click="handleToolClick(tool)"
               class="tool-button"
@@ -51,8 +51,8 @@
             ref="canvas"
             width="800"
             height="600"
-            @mousedown="startDrawing"
-            @mousemove="draw"
+            @mousedown="handleCanvasMouseDown"
+            @mousemove="handleCanvasMouseMove"
             @mouseup="stopDrawing"
             @mouseleave="stopDrawing"
           ></canvas>
@@ -165,8 +165,51 @@
         </div>
       </div>
 
-      <!-- Navigasyon okları -->
-      <div class="flex justify-between mt-4">
+      <!-- Navigasyon okları ve taslak ikonu -->
+      <div class="flex justify-between items-center mt-4">
+        <div v-if="mode === 'draw' && currentStep === 'drawing'" class="relative">
+          <button
+            @click="toggleDrafts"
+            class="bg-blue-500 text-white px-4 py-2 rounded"
+            title="Taslaklar"
+          >
+            <font-awesome-icon :icon="['fab', 'firstdraft']" />
+          </button>
+          <div
+            v-if="showDrafts"
+            class="absolute top-full left-0 mt-2 bg-white p-2 rounded shadow-lg z-10"
+          >
+            <div class="flex items-center mb-2">
+              <div class="flex space-x-2">
+                <div
+                  v-for="(draft, index) in drafts"
+                  :key="index"
+                  class="relative draft-image-container"
+                >
+                  <img
+                    :src="draft"
+                    @click="loadDraftWithAnimation(draft, index)"
+                    class="w-16 h-16 object-cover cursor-pointer transition-all duration-300"
+                    :alt="`Taslak ${index + 1}`"
+                    :ref="`draftImage${index}`"
+                  />
+                </div>
+              </div>
+              <button
+                v-if="drafts.length > 0"
+                @click="clearAllDrafts"
+                class="ml-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors duration-300"
+                title="Tüm taslakları temizle"
+              >
+                <font-awesome-icon :icon="['fas', 'trash-alt']" />
+              </button>
+            </div>
+            <div v-if="drafts.length === 0" class="text-gray-500 flex items-center justify-center">
+              <font-awesome-icon :icon="['fas', 'trash-alt']" class="mr-2" /> Taslak yok
+            </div>
+          </div>
+        </div>
+
         <button
           v-if="currentStep !== steps[0].id && !isEditing"
           @click="previousStep"
@@ -174,7 +217,17 @@
         >
           <font-awesome-icon :icon="['fas', 'arrow-left']" />
         </button>
-        <div v-else></div>
+
+        <div class="flex-grow"></div>
+
+        <button
+          v-if="currentStep === steps[steps.length - 1].id"
+          @click="generateCharacter"
+          class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
+        >
+          Karakter Oluştur
+        </button>
+
         <button
           v-if="currentStep !== steps[steps.length - 1].id && !isEditing"
           @click="nextStep"
@@ -188,7 +241,7 @@
 </template>
 
 <script>
-import { ref, onMounted, watch, nextTick } from 'vue'
+import { ref, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
 
 export default {
   name: 'DrawArea',
@@ -197,6 +250,11 @@ export default {
       type: String,
       default: 'draw',
       validator: (value) => ['draw', 'upload'].includes(value)
+    },
+    instructionAnimation: {
+      type: String,
+      default: 'stickFigure',
+      validator: (value) => ['stickFigure', 'car'].includes(value)
     }
   },
   setup(props) {
@@ -234,29 +292,116 @@ export default {
     const cursorCanvas = document.createElement('canvas')
     const cursorCtx = cursorCanvas.getContext('2d')
 
+    const drafts = ref([])
+    const showDrafts = ref(false)
+    const currentDrawing = ref(null)
+    const showClearButton = ref(false)
+
+    const hasInteracted = ref(false)
+    const instructionAnimationRef = ref(null)
+
+    const saveDraft = () => {
+      if (currentDrawing.value) {
+        const storedDrafts = JSON.parse(localStorage.getItem('drafts') || '[]')
+        storedDrafts.unshift(currentDrawing.value)
+        if (storedDrafts.length > 5) {
+          storedDrafts.pop()
+        }
+        localStorage.setItem('drafts', JSON.stringify(storedDrafts))
+        drafts.value = storedDrafts
+      }
+    }
+
+    const updateCanvasImage = () => {
+      if (canvas.value && props.mode === 'draw') {
+        currentDrawing.value = canvas.value.toDataURL()
+        canvasImage.value = currentDrawing.value
+        localStorage.setItem('savedDrawing', currentDrawing.value)
+      } else if (isEditing.value) {
+        const updatedImage = canvas.value.toDataURL()
+        uploadedImage.value = updatedImage
+        localStorage.setItem('savedUploadedImage', updatedImage)
+      }
+    }
+
+    const toggleDrafts = () => {
+      showDrafts.value = !showDrafts.value
+    }
+
+    const loadDraft = (draft) => {
+      const img = new Image()
+      img.onload = () => {
+        ctx.value.clearRect(0, 0, canvas.value.width, canvas.value.height)
+        ctx.value.drawImage(img, 0, 0, canvas.value.width, canvas.value.height)
+        updateCanvasImage()
+        showDrafts.value = false
+      }
+      img.src = draft
+    }
+
+    const clearAllDrafts = () => {
+      drafts.value = []
+      localStorage.removeItem('drafts')
+      showDrafts.value = false
+    }
+
+    const loadDrafts = () => {
+      const storedDrafts = JSON.parse(localStorage.getItem('drafts') || '[]')
+      drafts.value = storedDrafts
+    }
+
+    const handleCanvasInteraction = () => {
+      if (!hasInteracted.value) {
+        hasInteracted.value = true
+        if (ctx.value) {
+          ctx.value.fillStyle = '#000000'
+          ctx.value.fillRect(0, 0, canvas.value.width, canvas.value.height)
+        }
+      }
+    }
+
     onMounted(() => {
       if (props.mode === 'draw') {
         nextTick(() => {
           initializeCanvas()
         })
+
+        // Draft yükleme ve event listener'ları sadece draw modunda
+        loadDrafts()
+        window.addEventListener('beforeunload', saveDraft)
+
+        if (canvas.value) {
+          canvas.value.addEventListener('mousedown', handleCanvasInteraction)
+          canvas.value.addEventListener('touchstart', handleCanvasInteraction)
+        }
       } else if (props.mode === 'upload') {
         const savedImage = localStorage.getItem('savedUploadedImage')
         if (savedImage) {
           uploadedImage.value = savedImage
-          originalImage.value = savedImage
         }
       }
+    })
+
+    onBeforeUnmount(() => {
+      if (props.mode === 'draw') {
+        window.removeEventListener('beforeunload', saveDraft)
+        saveDraft()
+
+        if (canvas.value) {
+          canvas.value.removeEventListener('mousedown', handleCanvasInteraction)
+          canvas.value.removeEventListener('touchstart', handleCanvasInteraction)
+        }
+      }
+      cancelAnimationFrame(instructionAnimationRef.value)
     })
 
     const initializeCanvas = () => {
       ctx.value = canvas.value.getContext('2d')
       ctx.value.lineCap = 'round'
       ctx.value.lineJoin = 'round'
-      ctx.value.fillStyle = '#000000'
-      ctx.value.fillRect(0, 0, canvas.value.width, canvas.value.height)
 
-      if (isEditing.value) {
-        // Eğer düzenleme modundaysak, yüklenen resmi kullan
+      if (isEditing.value && uploadedImage.value) {
+        // Eğer düzenleme modundaysak ve yüklenmiş bir resim varsa, onu kullan
         const img = new Image()
         img.onload = () => {
           ctx.value.drawImage(img, 0, 0, canvas.value.width, canvas.value.height)
@@ -265,19 +410,12 @@ export default {
         }
         img.src = uploadedImage.value
       } else if (props.mode === 'draw') {
-        // Çizim modundaysak, kaydedilmiş çizimi yükle
-        const savedDrawing = localStorage.getItem('savedDrawing')
-        if (savedDrawing) {
-          const img = new Image()
-          img.onload = () => {
-            ctx.value.drawImage(img, 0, 0)
-            baseImage.value = ctx.value.getImageData(0, 0, canvas.value.width, canvas.value.height)
-            saveToHistory()
-          }
-          img.src = savedDrawing
-        } else {
-          baseImage.value = ctx.value.getImageData(0, 0, canvas.value.width, canvas.value.height)
-          saveToHistory()
+        // Çizim modundaysak, siyah arka plan oluştur ve eğer etkileşim yoksa animasyonu başlat
+        ctx.value.fillStyle = '#000000'
+        ctx.value.fillRect(0, 0, canvas.value.width, canvas.value.height)
+
+        if (!hasInteracted.value) {
+          startInstructionAnimation()
         }
       }
     }
@@ -360,20 +498,27 @@ export default {
       if (history.value.length > 10) {
         history.value.shift()
       }
+      updateCanvasImage() // Her değişiklikte canvas'ı kaydet
     }
 
     const undo = () => {
       if (history.value.length > 1) {
-        history.value.pop()
+        history.value.pop() // Son değişikliği çıkar
         ctx.value.putImageData(history.value[history.value.length - 1], 0, 0)
+        updateCanvasImage() // Canvas'ı güncelle ve kaydet
       } else if (history.value.length === 1) {
         ctx.value.putImageData(baseImage.value, 0, 0)
+        updateCanvasImage() // Canvas'ı güncelle ve kaydet
       }
     }
 
     const clearCanvas = () => {
-      ctx.value.putImageData(baseImage.value, 0, 0)
+      ctx.value.fillStyle = '#000000'
+      ctx.value.fillRect(0, 0, canvas.value.width, canvas.value.height)
+      baseImage.value = ctx.value.getImageData(0, 0, canvas.value.width, canvas.value.height)
       history.value = [baseImage.value]
+      localStorage.removeItem('savedDrawing')
+      updateCanvasImage()
     }
 
     const setTool = (tool) => {
@@ -389,19 +534,6 @@ export default {
       link.download = 'cizim.png'
       link.href = canvas.value.toDataURL()
       link.click()
-    }
-
-    const fillArea = (event) => {
-      const rect = canvas.value.getBoundingClientRect()
-      const x = Math.floor(event.clientX - rect.left)
-      const y = Math.floor(event.clientY - rect.top)
-
-      const imageData = ctx.value.getImageData(0, 0, canvas.value.width, canvas.value.height)
-      const targetColor = getPixelColor(imageData, x, y)
-      const fillColor = hexToRgb(currentColor.value)
-
-      floodFill(imageData, x, y, targetColor, fillColor)
-      ctx.value.putImageData(imageData, 0, 0)
     }
 
     const getPixelColor = (imageData, x, y) => {
@@ -422,38 +554,7 @@ export default {
       imageData.data[index + 3] = color[3]
     }
 
-    const floodFill = (imageData, x, y, targetColor, fillColor) => {
-      const stack = [[x, y]]
-      const width = imageData.width
-      const height = imageData.height
-
-      while (stack.length > 0) {
-        const [currX, currY] = stack.pop()
-        if (currX < 0 || currX >= width || currY < 0 || currY >= height) continue
-
-        const currentColor = getPixelColor(imageData, currX, currY)
-        if (!colorsMatch(currentColor, targetColor) || colorsMatch(currentColor, fillColor))
-          continue
-
-        setPixelColor(imageData, currX, currY, fillColor)
-
-        stack.push([currX + 1, currY])
-        stack.push([currX - 1, currY])
-        stack.push([currX, currY + 1])
-        stack.push([currX, currY - 1])
-      }
-    }
-
-    const colorsMatch = (color1, color2) => {
-      return (
-        color1[0] === color2[0] &&
-        color1[1] === color2[1] &&
-        color1[2] === color2[2] &&
-        color1[3] === color2[3]
-      )
-    }
-
-    const hexToRgb = (hex) => {
+    const hexToRgba = (hex) => {
       const r = parseInt(hex.slice(1, 3), 16)
       const g = parseInt(hex.slice(3, 5), 16)
       const b = parseInt(hex.slice(5, 7), 16)
@@ -464,9 +565,10 @@ export default {
       console.log('Karakter oluşturuluyor:', {
         prompt: characterPrompt.value,
         style: characterStyle.value,
-        image: canvas.value.toDataURL()
+        image: canvasImage.value || uploadedImage.value
       })
       // Burada karakter oluşturma API'sini çağırabilirsiniz
+      nextStep()
     }
 
     const addStep = (stepId, stepName) => {
@@ -475,25 +577,14 @@ export default {
 
     const getToolTitle = (tool) => {
       const titles = {
-        brush: 'Brush',
-        eraser: 'Eraser',
-        'fill-drip': 'Fill',
-        'trash-alt': 'Clear',
-        undo: 'Undo'
+        brush: 'Fırça',
+        eraser: 'Silgi',
+        'fill-drip': 'Doldur',
+        'trash-alt': 'Temizle',
+        undo: 'Geri Al',
+        download: 'İndir'
       }
       return titles[tool] || tool
-    }
-
-    const updateCanvasImage = () => {
-      if (canvas.value && props.mode === 'draw') {
-        const updatedImage = canvas.value.toDataURL()
-        canvasImage.value = updatedImage
-        localStorage.setItem('savedDrawing', updatedImage)
-      } else if (isEditing.value) {
-        const updatedImage = canvas.value.toDataURL()
-        uploadedImage.value = updatedImage
-        localStorage.setItem('savedUploadedImage', updatedImage)
-      }
     }
 
     const handleImageUpload = (event) => {
@@ -531,14 +622,6 @@ export default {
       isEditing.value = true
       nextTick(() => {
         initializeCanvas()
-        const img = new Image()
-        img.onload = () => {
-          ctx.value.clearRect(0, 0, canvas.value.width, canvas.value.height)
-          ctx.value.drawImage(img, 0, 0, canvas.value.width, canvas.value.height)
-          baseImage.value = ctx.value.getImageData(0, 0, canvas.value.width, canvas.value.height)
-          saveToHistory()
-        }
-        img.src = uploadedImage.value
       })
     }
 
@@ -556,6 +639,8 @@ export default {
         undo()
       } else if (tool === 'trash-alt') {
         clearCanvas()
+      } else if (tool === 'download') {
+        downloadCanvas()
       } else {
         currentTool.value = tool
       }
@@ -569,6 +654,194 @@ export default {
         canvasImage.value = localStorage.getItem('savedDrawing') || ''
         uploadedImage.value = null
       }
+    }
+
+    const handleCanvasMouseDown = (event) => {
+      if (currentTool.value === 'fill-drip') {
+        fillArea(event)
+      } else {
+        startDrawing(event)
+      }
+    }
+
+    const handleCanvasMouseMove = (event) => {
+      if (currentTool.value !== 'fill-drip') {
+        draw(event)
+      }
+    }
+
+    const fillArea = (event) => {
+      const rect = canvas.value.getBoundingClientRect()
+      const x = Math.floor(event.clientX - rect.left)
+      const y = Math.floor(event.clientY - rect.top)
+
+      const imageData = ctx.value.getImageData(0, 0, canvas.value.width, canvas.value.height)
+      const targetColor = getPixelColor(imageData, x, y)
+      const fillColor = hexToRgba(currentColor.value)
+
+      floodFill(imageData, x, y, targetColor, fillColor)
+      ctx.value.putImageData(imageData, 0, 0)
+      saveToHistory()
+      updateCanvasImage()
+    }
+
+    const floodFill = (imageData, x, y, targetColor, fillColor) => {
+      const width = imageData.width
+      const height = imageData.height
+      const stack = [[x, y]]
+      const targetColorStr = targetColor.join(',')
+      const fillColorStr = fillColor.join(',')
+
+      if (targetColorStr === fillColorStr) {
+        return
+      }
+
+      while (stack.length > 0) {
+        const [currX, currY] = stack.pop()
+        if (currX < 0 || currX >= width || currY < 0 || currY >= height) {
+          continue
+        }
+
+        const currentColor = getPixelColor(imageData, currX, currY)
+        if (currentColor.join(',') !== targetColorStr) {
+          continue
+        }
+
+        setPixelColor(imageData, currX, currY, fillColor)
+
+        stack.push([currX + 1, currY])
+        stack.push([currX - 1, currY])
+        stack.push([currX, currY + 1])
+        stack.push([currX, currY - 1])
+      }
+    }
+
+    const deleteDraft = (index) => {
+      drafts.value.splice(index, 1)
+      localStorage.setItem('drafts', JSON.stringify(drafts.value))
+    }
+
+    const loadDraftWithAnimation = (draft, index) => {
+      const draftImage = document.querySelector(`[alt="Taslak ${index + 1}"]`)
+      const canvasRect = canvas.value.getBoundingClientRect()
+      const draftRect = draftImage.getBoundingClientRect()
+
+      const clonedImage = draftImage.cloneNode(true)
+      clonedImage.style.position = 'fixed'
+      clonedImage.style.left = `${draftRect.left}px`
+      clonedImage.style.top = `${draftRect.top}px`
+      clonedImage.style.width = `${draftRect.width}px`
+      clonedImage.style.height = `${draftRect.height}px`
+      clonedImage.style.transition = 'all 0.5s ease-in-out'
+      clonedImage.style.zIndex = '9999'
+
+      document.body.appendChild(clonedImage)
+
+      setTimeout(() => {
+        clonedImage.style.left = `${canvasRect.left}px`
+        clonedImage.style.top = `${canvasRect.top}px`
+        clonedImage.style.width = `${canvasRect.width}px`
+        clonedImage.style.height = `${canvasRect.height}px`
+        clonedImage.style.opacity = '0'
+      }, 50)
+
+      setTimeout(() => {
+        document.body.removeChild(clonedImage)
+        loadDraft(draft)
+      }, 550)
+    }
+
+    const startInstructionAnimation = () => {
+      if (props.instructionAnimation === 'stickFigure') {
+        startStickFigureAnimation()
+      } else if (props.instructionAnimation === 'car') {
+        startCarAnimation()
+      }
+    }
+
+    const startStickFigureAnimation = () => {
+      const drawStickFigure = (progress) => {
+        ctx.value.strokeStyle = '#FFFFFF'
+        ctx.value.lineWidth = 3
+        ctx.value.beginPath()
+
+        // Kafa
+        ctx.value.arc(400, 200, 30 * progress, 0, Math.PI * 2)
+
+        // Gövde
+        ctx.value.moveTo(400, 230)
+        ctx.value.lineTo(400, 230 + 100 * progress)
+
+        // Kollar
+        ctx.value.moveTo(400, 260)
+        ctx.value.lineTo(400 - 50 * progress, 300)
+        ctx.value.moveTo(400, 260)
+        ctx.value.lineTo(400 + 50 * progress, 300)
+
+        // Bacaklar
+        ctx.value.moveTo(400, 330)
+        ctx.value.lineTo(400 - 40 * progress, 400)
+        ctx.value.moveTo(400, 330)
+        ctx.value.lineTo(400 + 40 * progress, 400)
+
+        ctx.value.stroke()
+      }
+
+      animateDrawing(drawStickFigure)
+    }
+
+    const startCarAnimation = () => {
+      const drawCar = (progress) => {
+        ctx.value.strokeStyle = '#FFFFFF'
+        ctx.value.lineWidth = 3
+        ctx.value.beginPath()
+
+        // Gövde
+        ctx.value.moveTo(200, 300)
+        ctx.value.lineTo(200 + 400 * progress, 300)
+        ctx.value.lineTo(200 + 400 * progress, 250)
+        ctx.value.lineTo(200 + 300 * progress, 200)
+        ctx.value.lineTo(200 + 100 * progress, 200)
+        ctx.value.lineTo(200, 250)
+        ctx.value.closePath()
+
+        // Tekerlekler
+        ctx.value.moveTo(250, 300)
+        ctx.value.arc(250, 300, 30 * progress, 0, Math.PI * 2)
+        ctx.value.moveTo(550, 300)
+        ctx.value.arc(550, 300, 30 * progress, 0, Math.PI * 2)
+
+        ctx.value.stroke()
+      }
+
+      animateDrawing(drawCar)
+    }
+
+    const animateDrawing = (drawFunction) => {
+      let progress = 0
+      const animate = () => {
+        if (hasInteracted.value) {
+          cancelAnimationFrame(instructionAnimationRef.value)
+          return
+        }
+
+        ctx.value.fillStyle = '#000000'
+        ctx.value.fillRect(0, 0, canvas.value.width, canvas.value.height)
+
+        drawFunction(progress)
+
+        progress += 0.02
+        if (progress <= 1) {
+          instructionAnimationRef.value = requestAnimationFrame(animate)
+        } else {
+          setTimeout(() => {
+            ctx.value.fillStyle = '#000000'
+            ctx.value.fillRect(0, 0, canvas.value.width, canvas.value.height)
+          }, 2000)
+        }
+      }
+
+      instructionAnimationRef.value = requestAnimationFrame(animate)
     }
 
     watch(
@@ -641,7 +914,24 @@ export default {
       undo,
       handleToolClick,
       updateCanvasImage,
-      resetDrawing
+      resetDrawing,
+      handleCanvasMouseDown,
+      handleCanvasMouseMove,
+      fillArea,
+      getPixelColor,
+      setPixelColor,
+      floodFill,
+      hexToRgba,
+      drafts,
+      showDrafts,
+      toggleDrafts,
+      loadDraft,
+      clearAllDrafts,
+      showClearButton,
+      deleteDraft,
+      loadDraftWithAnimation,
+      handleCanvasInteraction,
+      ...(props.mode === 'draw' ? { saveDraft, loadDrafts } : {})
     }
   }
 }
@@ -719,5 +1009,42 @@ export default {
 }
 .tool-button.bg-green-500:hover {
   background-color: #059669;
+}
+
+.draft-image-container {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  overflow: visible;
+  padding: 4px;
+  background-color: #ffffff;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.draft-image-container img {
+  transition: all 0.3s ease;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+.draft-image-container:hover img {
+  transform: scale(2) translateY(-25%);
+  z-index: 10;
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

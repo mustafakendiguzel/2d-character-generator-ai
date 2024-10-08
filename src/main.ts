@@ -10,6 +10,7 @@ import {
   faEdit,
   faEraser,
   faFillDrip,
+  faSave,
   faTrashAlt,
   faUndo
 } from '@fortawesome/free-solid-svg-icons'
@@ -28,9 +29,12 @@ library.add(faTrashAlt)
 library.add(faUndo)
 library.add(faEdit)
 library.add(faCheck)
+library.add(faFirstdraft)
+library.add(faSave)
 
 import App from './App.vue'
 import router from './router'
+import { faFirstdraft } from '@fortawesome/free-brands-svg-icons'
 
 const app = createApp(App)
 app.component('dotlottie-vue', DotLottieVue)
