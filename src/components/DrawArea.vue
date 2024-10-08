@@ -205,7 +205,7 @@
               </button>
             </div>
             <div v-if="drafts.length === 0" class="text-gray-500 flex items-center justify-center">
-              <font-awesome-icon :icon="['fas', 'trash-alt']" class="mr-2" /> Taslak yok
+              <font-awesome-icon :icon="['fas', 'trash-alt']" class="mr-2" />
             </div>
           </div>
         </div>
@@ -255,6 +255,10 @@ export default {
       type: String,
       default: 'stickFigure',
       validator: (value) => ['stickFigure', 'car'].includes(value)
+    },
+    customAnimation: {
+      type: Function,
+      default: null
     }
   },
   setup(props) {
@@ -752,7 +756,9 @@ export default {
     }
 
     const startInstructionAnimation = () => {
-      if (props.instructionAnimation === 'stickFigure') {
+      if (props.customAnimation) {
+        props.customAnimation(ctx.value, canvas.value.width, canvas.value.height, animateDrawing)
+      } else if (props.instructionAnimation === 'stickFigure') {
         startStickFigureAnimation()
       } else if (props.instructionAnimation === 'car') {
         startCarAnimation()
@@ -762,29 +768,61 @@ export default {
     const startStickFigureAnimation = () => {
       const drawStickFigure = (progress) => {
         ctx.value.strokeStyle = '#FFFFFF'
-        ctx.value.lineWidth = 3
+        ctx.value.lineWidth = 2
         ctx.value.beginPath()
 
         // Kafa
-        ctx.value.arc(400, 200, 30 * progress, 0, Math.PI * 2)
+        ctx.value.arc(400, 180, 25 * progress, 0, Math.PI * 2)
 
         // Gövde
-        ctx.value.moveTo(400, 230)
-        ctx.value.lineTo(400, 230 + 100 * progress)
+        ctx.value.moveTo(400, 205)
+        ctx.value.lineTo(400, 205 + 80 * progress)
 
         // Kollar
-        ctx.value.moveTo(400, 260)
-        ctx.value.lineTo(400 - 50 * progress, 300)
-        ctx.value.moveTo(400, 260)
-        ctx.value.lineTo(400 + 50 * progress, 300)
+        ctx.value.moveTo(400, 230)
+        ctx.value.lineTo(400 - 40 * progress, 260)
+        ctx.value.moveTo(400, 230)
+        ctx.value.lineTo(400 + 40 * progress, 260)
 
         // Bacaklar
-        ctx.value.moveTo(400, 330)
-        ctx.value.lineTo(400 - 40 * progress, 400)
-        ctx.value.moveTo(400, 330)
-        ctx.value.lineTo(400 + 40 * progress, 400)
+        ctx.value.moveTo(400, 285)
+        ctx.value.lineTo(400 - 30 * progress, 345)
+        ctx.value.moveTo(400, 285)
+        ctx.value.lineTo(400 + 30 * progress, 345)
+
+        // Kılıç
+        ctx.value.moveTo(440, 260)
+        ctx.value.lineTo(440 + 60 * progress, 220)
+        ctx.value.lineTo(440 + 65 * progress, 215)
+        // Kılıç kabzası
+        ctx.value.moveTo(440, 260)
+        ctx.value.lineTo(440 - 10 * progress, 260)
+        ctx.value.moveTo(440 - 5 * progress, 255)
+        ctx.value.lineTo(440 - 5 * progress, 265)
+
+        // Kalkan
+        ctx.value.moveTo(360, 240)
+        ctx.value.arc(360, 240, 30 * progress, -Math.PI / 2, Math.PI / 2)
+        ctx.value.lineTo(360, 240 + 30 * progress)
+        // Kalkan üzerindeki şekil (örneğin, yıldız)
+        const shieldCenterX = 360 - 15 * progress
+        const shieldCenterY = 240
+        for (let i = 0; i < 5; i++) {
+          const angle = (i * 4 * Math.PI) / 5
+          const x = shieldCenterX + 10 * progress * Math.cos(angle)
+          const y = shieldCenterY + 10 * progress * Math.sin(angle)
+          ctx.value.lineTo(x, y)
+        }
 
         ctx.value.stroke()
+
+        // Karakalem efekti
+        for (let i = 0; i < 1000; i++) {
+          const x = Math.random() * canvas.value.width
+          const y = Math.random() * canvas.value.height
+          ctx.value.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.05})`
+          ctx.value.fillRect(x, y, 1, 1)
+        }
       }
 
       animateDrawing(drawStickFigure)
@@ -800,18 +838,38 @@ export default {
         ctx.value.moveTo(200, 300)
         ctx.value.lineTo(200 + 400 * progress, 300)
         ctx.value.lineTo(200 + 400 * progress, 250)
-        ctx.value.lineTo(200 + 300 * progress, 200)
-        ctx.value.lineTo(200 + 100 * progress, 200)
+        ctx.value.lineTo(200 + 350 * progress, 200)
+        ctx.value.lineTo(200 + 50 * progress, 200)
         ctx.value.lineTo(200, 250)
         ctx.value.closePath()
 
+        // Ön cam
+        ctx.value.moveTo(200 + 80 * progress, 220)
+        ctx.value.lineTo(200 + 180 * progress, 180)
+        ctx.value.lineTo(200 + 280 * progress, 180)
+        ctx.value.lineTo(200 + 320 * progress, 220)
+
         // Tekerlekler
         ctx.value.moveTo(250, 300)
-        ctx.value.arc(250, 300, 30 * progress, 0, Math.PI * 2)
+        ctx.value.arc(250, 300, 40 * progress, 0, Math.PI * 2)
         ctx.value.moveTo(550, 300)
-        ctx.value.arc(550, 300, 30 * progress, 0, Math.PI * 2)
+        ctx.value.arc(550, 300, 40 * progress, 0, Math.PI * 2)
+
+        // Kanatlar
+        ctx.value.moveTo(200 + 100 * progress, 250)
+        ctx.value.lineTo(200 + 50 * progress, 320)
+        ctx.value.moveTo(200 + 300 * progress, 250)
+        ctx.value.lineTo(200 + 350 * progress, 320)
 
         ctx.value.stroke()
+
+        // Karakalem efekti
+        for (let i = 0; i < 1000; i++) {
+          const x = Math.random() * canvas.value.width
+          const y = Math.random() * canvas.value.height
+          ctx.value.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.05})`
+          ctx.value.fillRect(x, y, 1, 1)
+        }
       }
 
       animateDrawing(drawCar)
